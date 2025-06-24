@@ -54,93 +54,86 @@ const UpdatePassword = () => {
   };
 
   return (
-    <div className="bg-[#9e9e9e] min-h-[100vh]">
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          style={{ minHeight: "80vh" }}
-        >
-          <div className="bg-[#eeeeee] rounded-lg p-5 border border-[#707070]">
-            <div className="mb-8">
-              <div className="flex items-center gap-1 mb-4">
-                <Link to="/verify-otp" style={{ textDecoration: "none" }}>
-                  <HiArrowLeft style={{ fontSize: "24px" }} />
-                </Link>
-                <Typography variant="h5" style={{ fontWeight: 500 }}>
-                  Set a new password
-                </Typography>
-              </div>
-            </div>
-
-            <form onSubmit={onFinish}>
-              <TextField
-                label="New Password"
-                name="password"
-                type="password"
-                fullWidth
-                required
-                variant="outlined"
-                placeholder="Enter new password"
-                margin="normal"
-                InputProps={{
-                  startAdornment: (
-                    <MdOutlineLock
-                      style={{ fontSize: "24px", marginRight: "8px" }}
-                    />
-                  ),
-                }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    paddingLeft: "10px",
-                  },
-                }}
-              />
-              <TextField
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                fullWidth
-                required
-                variant="outlined"
-                placeholder="Confirm your password"
-                margin="normal"
-                InputProps={{
-                  startAdornment: (
-                    <MdOutlineLock
-                      style={{ fontSize: "24px", marginRight: "8px" }}
-                    />
-                  ),
-                }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    paddingLeft: "10px",
-                  },
-                }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                style={{
-                  marginTop: "20px",
-                  backgroundColor: "#000",
-                  padding: "8px",
-                  fontWeight: "bold",
-                  borderRadius: "30px",
-                  fontSize: "16px",
-                  textTransform: "none",
-                }}
-              >
-                Update Password
-              </Button>
-            </form>
+    <div className="bg-[#fff] min-h-[65vh] max-w-2xl mx-auto my-40 p-8 flex flex-col items-center">
+      <div className="bg-[#ECF2F7] rounded-lg p-8">
+        {/* <div className="mb-8">
+          <div className="flex items-center gap-1 mb-4">
+            <Link to="/verify-otp" style={{ textDecoration: "none" }}>
+              <HiArrowLeft style={{ fontSize: "24px" }} />
+            </Link>
+            <Typography variant="h5" style={{ fontWeight: 500 }}>
+              Set a new password
+            </Typography>
           </div>
-        </Grid>
-      </Container>
+        </div> */}
+        <p className="text-3xl font-semibold text-[#333] text-center mb-8">
+          Create New Password
+        </p>
+
+        <form onSubmit={onFinish}>
+          <TextField
+            label="New Password"
+            name="password"
+            type="password"
+            fullWidth
+            required
+            variant="outlined"
+            placeholder="Enter new password"
+            margin="normal"
+            InputProps={{
+              startAdornment: (
+                <MdOutlineLock
+                  style={{ fontSize: "24px", marginRight: "8px" }}
+                />
+              ),
+            }}
+            sx={{
+              "& .MuiInputBase-root": {
+                paddingLeft: "10px",
+              },
+            }}
+          />
+          <TextField
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            fullWidth
+            required
+            variant="outlined"
+            placeholder="Confirm your password"
+            margin="normal"
+            InputProps={{
+              startAdornment: (
+                <MdOutlineLock
+                  style={{ fontSize: "24px", marginRight: "8px" }}
+                />
+              ),
+            }}
+            sx={{
+              "& .MuiInputBase-root": {
+                paddingLeft: "10px",
+              },
+            }}
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            style={{
+              marginTop: "20px",
+              backgroundColor: "#3F80AE",
+              padding: "8px",
+              fontWeight: "bold",
+              borderRadius: "10px",
+              fontSize: "16px",
+              textTransform: "none",
+            }}
+          >
+            Update Password
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };

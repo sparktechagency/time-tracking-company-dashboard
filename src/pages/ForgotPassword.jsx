@@ -38,73 +38,63 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="bg-[#9e9e9e] min-h-[100vh]">
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          style={{ minHeight: "80vh" }}
-        >
-          <div className="bg-[#eeeeee] rounded-lg p-5 border border-[#707070]">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Link to="/sign-in" className="cursor-pointer">
-                  <HiArrowLeft style={{ fontSize: "24px", color: "black" }} />
-                </Link>
-                <p className="text-2xl font-medium">Forget Password</p>
-              </div>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                style={{ marginBottom: "20px" }}
-              >
-                Please enter your email address to reset your password
-              </Typography>
-            </div>
-
-            <form onSubmit={onFinish}>
-              <TextField
-                label="Email"
-                type="email"
-                fullWidth
-                required
-                margin="normal"
-                variant="outlined"
-                placeholder="Enter your email"
-                value={email}
-                onChange={handleEmailChange}
-                InputProps={{
-                  startAdornment: (
-                    <IoMailOpen
-                      style={{ fontSize: "24px", marginRight: "8px" }}
-                    />
-                  ),
-                }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                style={{
-                  marginTop: "20px",
-                  backgroundColor: "#000",
-                  padding: "8px",
-                  fontWeight: "bold",
-                  borderRadius: "30px",
-                  fontSize: "16px",
-                  textTransform: "none",
-                }}
-              >
-                Send OTP
-              </Button>
-            </form>
+    <div className="bg-[#fff] min-h-[66vh] max-w-2xl flex flex-col gap-5 items-center mx-auto my-40 p-5 rounded-lg">
+      <div className="bg-[#ECF2F7] rounded-3xl p-8">
+        <div className="mb-6">
+          <div className="flex items-start gap-3">
+            <Link to="/sign-in" className="cursor-pointer">
+              <HiArrowLeft style={{ fontSize: "24px", color: "black" }} />
+            </Link>
+            <p className="text-2xl font-medium text-center text-[#333333]">
+              Are You Sure You Forgot Your Password?
+            </p>
           </div>
-        </Grid>
-      </Container>
+          {/* <Typography
+            variant="body1"
+            color="textSecondary"
+            style={{ marginBottom: "20px" }}
+          >
+            Please enter your email address to reset your password
+          </Typography> */}
+        </div>
+
+        <form onSubmit={onFinish}>
+          <TextField
+            label="Email"
+            type="email"
+            fullWidth
+            required
+            margin="normal"
+            variant="outlined"
+            placeholder="Enter your email"
+            value={email}
+            onChange={handleEmailChange}
+            InputProps={{
+              startAdornment: (
+                <IoMailOpen style={{ fontSize: "24px", marginRight: "8px" }} />
+              ),
+            }}
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            style={{
+              marginTop: "20px",
+              backgroundColor: "#3F80AE",
+              padding: "8px",
+              fontWeight: "600",
+              borderRadius: "10px",
+              fontSize: "16px",
+              textTransform: "none",
+            }}
+          >
+            Send Reset Code
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };

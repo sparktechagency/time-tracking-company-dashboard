@@ -9,6 +9,9 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdOutlineLock } from "react-icons/md";
+
+import logInImage from "../../public/Images/logIn.png";
+
 // import { useSignInMutation } from "../../Redux/api/authApi";
 // import { toast } from "sonner";
 
@@ -47,90 +50,81 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-[#868686] min-h-[100vh]">
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          style={{ minHeight: "80vh" }}
-        >
-          <div className="bg-[#eeeeee] rounded-lg p-5 border border-[#707070]">
-            <p className="text-3xl text-center font-semibold mb-7">
-              Sign in to continue!
-            </p>
+    <div className="bg-[#fff] min-h-[76vh] max-w-2xl flex flex-col gap-5 items-center mx-auto my-28 p-5 rounded-lg">
+      <img src={logInImage} alt="logo" className="size-40" />
+      <div className="bg-[#ECF2F7] rounded-3xl p-8">
+        <p className="text-3xl text-center font-semibold mb-7 text-[#333333]">
+          Log In
+        </p>
 
-            <form onSubmit={onFinish}>
-              <TextField
-                label="Email"
-                name="email"
-                type="email"
-                fullWidth
-                required
-                margin="normal"
-                variant="outlined"
-                placeholder="Enter your email"
-                InputProps={{
-                  startAdornment: <HiOutlineMailOpen />,
-                }}
+        <form onSubmit={onFinish}>
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            fullWidth
+            required
+            margin="normal"
+            variant="outlined"
+            placeholder="Enter your email"
+            InputProps={{
+              startAdornment: <HiOutlineMailOpen />,
+            }}
+          />
+
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            fullWidth
+            required
+            margin="normal"
+            variant="outlined"
+            placeholder="Enter your password"
+            InputProps={{
+              startAdornment: <MdOutlineLock />,
+            }}
+          />
+
+          <div className="flex items-center justify-between mt-2">
+            <div>
+              <FormControlLabel
+                control={<Checkbox name="rememberMe" color="primary" />}
+                label="Remember me"
               />
-
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                fullWidth
-                required
-                margin="normal"
-                variant="outlined"
-                placeholder="Enter your password"
-                InputProps={{
-                  startAdornment: <MdOutlineLock />,
-                }}
-              />
-
-              <div className="flex items-center justify-between mt-2">
-                <div>
-                  <FormControlLabel
-                    control={<Checkbox name="rememberMe" color="primary" />}
-                    label="Remember me"
-                  />
-                </div>
-                <div>
-                  <Link
-                    to="/forgot-password"
-                    style={{
-                      fontWeight: "bold",
-                      textDecoration: "underline",
-                      color: "#494949",
-                    }}
-                  >
-                    Forgot Password?
-                  </Link>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
+            </div>
+            <div>
+              <Link
+                to="/forgot-password"
                 style={{
-                  marginTop: "20px",
-                  backgroundColor: "#000000",
-                  padding: "8px",
-                  fontWeight: "bold",
-                  borderRadius: "30px",
-                  fontSize: "16px",
-                  textTransform: "none",
+                  fontWeight: "600",
+                  // textDecoration: "underline",
+                  color: "#545454",
                 }}
               >
-                Sign In
-              </Button>
-            </form>
+                Forgot Password?
+              </Link>
+            </div>
           </div>
-        </Grid>
-      </Container>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            style={{
+              marginTop: "20px",
+              backgroundColor: "#3F80AE",
+              padding: "8px",
+              fontWeight: "600",
+              borderRadius: "10px",
+              fontSize: "16px",
+              textTransform: "none",
+            }}
+          >
+            Sign In
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
