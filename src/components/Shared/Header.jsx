@@ -1,35 +1,20 @@
-import React, { useState } from "react";
 import { PiBellSimpleRingingBold } from "react-icons/pi";
 
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, MenuItem, Button } from "@mui/material";
-import { IoIosArrowDown } from "react-icons/io";
+import { Button } from "@mui/material";
 import profileImg from "../../../public/Images/profile.png";
 
 export default function Header() {
-  const [dropdownMenu, setDropdownMenu] = useState(null);
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleProfileClick = (event) => {
-    setDropdownMenu(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleLogout = () => {
-    console.log("User logged out");
-    navigate("/sign-in");
-    handleClose();
+  const handleProfileClick = () => {
+    navigate("/profile");
   };
 
   return (
-    <div className="flex items-center justify-end bg-[#FF9500] w-full px-10 py-4 border-b border-gray-200">
+    <div className="flex items-center justify-end bg-[#fff] w-full px-10 py-4">
       <div className="flex items-center gap-4">
-        <div className="text-white">
+        <div className="bg-[#f0f0f0] p-2 rounded-full hover:bg-[#E0E1E2] transition-colors duration-300">
           <Link to="/notifications">
             <PiBellSimpleRingingBold fontSize={24} />
           </Link>
@@ -51,35 +36,12 @@ export default function Header() {
               alt=""
               className="size-8 rounded-full border border-white"
             />
-            <p className="text-white font-medium">User Name</p>
-            <IoIosArrowDown fontSize={20} color="white" />
+            <div className="flex flex-col items-start">
+              <p className="text-black font-medium">User Name</p>
+              <p className="text-black font-medium text-xs">Admin</p>
+            </div>
           </div>
         </Button>
-        <Menu
-          anchorEl={dropdownMenu}
-          open={open}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          PaperProps={{
-            style: {
-              width: "130px",
-            },
-          }}
-        >
-          {/* <MenuItem component={Link} to="/edit-profile" onClick={handleClose}>
-            Profile
-          </MenuItem>
-          <hr className="border-t border-[#ebebeb]" /> */}
-
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        </Menu>
       </div>
     </div>
   );
