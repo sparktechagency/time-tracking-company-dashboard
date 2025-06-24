@@ -46,72 +46,63 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="bg-[#9e9e9e] min-h-[100vh]">
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          style={{ minHeight: "80vh" }}
+    <div className="bg-[#fff] min-h-[66vh] max-w-2xl flex flex-col gap-5 items-center mx-auto my-40 p-5 rounded-lg">
+      <div className="bg-[#ECF2F7] rounded-lg p-8">
+        <div className="mb-8">
+          {/* <div className="flex items-center gap-1 mb-4">
+            <Link to="/forgot-password" className="cursor-pointer">
+              <HiArrowLeft style={{ fontSize: "24px" }} />
+            </Link>
+            <p className="text-xl text-center font-semibold text-[#333333]">
+              Verify Your Account
+            </p>
+          </div> */}
+
+          <p className="text-2xl text-center font-semibold text-[#333333] mb-4">
+            Verify Your Account
+          </p>
+          <p className="mb-4 text-center text-[#545454]">
+            We've sent the 6 digit code verification code to your email/phone.
+            Enter the code below to continue
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <OTPInput
+            inputStyle={{
+              width: "55px",
+              height: "45px",
+              fontSize: "20px",
+              backgroundColor: "transparent",
+              border: "1px solid #222021",
+              borderRadius: "8px",
+              margin: "5px",
+              textAlign: "center",
+            }}
+            value={otp}
+            onChange={setOtp}
+            numInputs={6}
+            renderInput={(props) => <input {...props} required />}
+          />
+        </div>
+
+        <Button
+          fullWidth
+          variant="contained"
+          style={{
+            marginTop: "30px",
+            backgroundColor: "#3F80AE",
+            padding: "8px",
+            fontWeight: "bold",
+            borderRadius: "10px",
+            fontSize: "16px",
+            textTransform: "none",
+          }}
+          onClick={handleOTPSubmit}
         >
-          <div className="bg-[#eeeeee] rounded-lg p-5 border border-[#707070]">
-            <div className="mb-8">
-              <div className="flex items-center gap-1 mb-4">
-                <Link to="/forgot-password" className="cursor-pointer">
-                  <HiArrowLeft style={{ fontSize: "24px" }} />
-                </Link>
-                <Typography variant="h5" style={{ fontWeight: 500 }}>
-                  Enter verification code
-                </Typography>
-              </div>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                style={{ marginBottom: "20px" }}
-              >
-                Please enter the OTP sent to your email address
-              </Typography>
-            </div>
-
-            <div className="flex items-center justify-center">
-              <OTPInput
-                inputStyle={{
-                  width: "55px",
-                  height: "45px",
-                  fontSize: "20px",
-                  backgroundColor: "transparent",
-                  border: "1px solid #222021",
-                  borderRadius: "8px",
-                  margin: "5px",
-                  textAlign: "center",
-                }}
-                value={otp}
-                onChange={setOtp}
-                numInputs={6}
-                renderInput={(props) => <input {...props} required />}
-              />
-            </div>
-
-            <Button
-              fullWidth
-              variant="contained"
-              style={{
-                marginTop: "20px",
-                backgroundColor: "#000",
-                padding: "8px",
-                fontWeight: "bold",
-                borderRadius: "30px",
-                fontSize: "16px",
-                textTransform: "none",
-              }}
-              onClick={handleOTPSubmit}
-            >
-              Verify
-            </Button>
-          </div>
-        </Grid>
-      </Container>
+          Verify
+        </Button>
+      </div>
     </div>
   );
 };
