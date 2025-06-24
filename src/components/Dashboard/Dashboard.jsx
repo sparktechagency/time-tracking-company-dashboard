@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { LuCalendar } from "react-icons/lu";
+import { FaRegUser } from "react-icons/fa";
+import { LuFolderKanban } from "react-icons/lu";
 
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
@@ -28,24 +30,29 @@ export default function Dashboard() {
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
 
   return (
-    <div className="bg-[#FFF9E3] px-10 py-3 h-[92vh] w-full">
+    <div className="bg-[#efefef] px-10 py-3 h-[92vh] w-full">
       <div className="flex flex-col gap-4 mt-2">
         <div className="flex items-center justify-between gap-5">
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full h-28">
-            <p className="font-medium text-lg">Total Service Provider</p>
-            <p className="text-[#FF9500] text-3xl font-semibold">320</p>
+            <div className="flex items-center gap-2 text-[#333333]">
+              <FaRegUser />
+              <p className="font-medium text-lg">Total Employee</p>
+            </div>
+            <p className="text-[#333333] text-3xl font-semibold">320</p>
           </div>
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
-            <p className="font-medium text-lg">Total User</p>
-            <p className="text-[#FF9500] text-3xl font-semibold">134</p>
+            <div className="flex items-center gap-2 text-[#333333]">
+              <LuFolderKanban />
+              <p className="font-medium text-lg">Total Project</p>
+            </div>
+            <p className="text-[#333333] text-3xl font-semibold">134</p>
           </div>
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
-            <p className="font-medium text-lg">Total Orders</p>
-            <p className="text-[#FF9500] text-3xl font-semibold">403</p>
-          </div>
-          <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full h-28">
-            <p className="font-medium text-lg">Total Earnings</p>
-            <p className="text-[#FF9500] text-3xl font-semibold">$ 3,520</p>
+            <div className="flex items-center gap-2 text-[#333333]">
+              <LuFolderKanban />
+              <p className="font-medium text-lg">Complete Project</p>
+            </div>
+            <p className="text-[#333] text-3xl font-semibold">403</p>
           </div>
         </div>
       </div>
