@@ -57,64 +57,28 @@ const router = createBrowserRouter([
             element: <Dashboard />,
           },
           {
-            path: "provider-stats",
+            path: "all-employee",
             element: <ProviderStats />,
           },
           {
-            path: "user-stats",
+            path: "create-project",
             element: <UserStats />,
           },
           {
-            path: "order-details",
+            path: "running-project",
             element: <OrderDetails />,
           },
           {
-            path: "user-details",
+            path: "change-password",
             element: <UserDetails />,
           },
           {
-            path: "provider-details",
+            path: "privacy-policy",
             element: <ProviderDetails />,
           },
           {
-            path: "rider-details",
+            path: "add-break-time",
             element: <RiderDetails />,
-          },
-          {
-            path: "transactions",
-            element: <Transactions />,
-          },
-          {
-            path: "services",
-            element: <Services />,
-          },
-          {
-            path: "stores",
-            element: <Stores />,
-          },
-          {
-            path: "advertisement",
-            element: <Advertisement />,
-          },
-          {
-            path: "store-details/:url",
-            element: <StoreDetails />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
-            path: "settings/profile",
-            element: <Profile />,
-          },
-          {
-            path: "settings/change-password",
-            element: <ChangePassword />,
-          },
-          {
-            path: "notifications",
-            element: <Notifications />,
           },
         ],
       },

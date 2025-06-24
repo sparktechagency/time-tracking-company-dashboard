@@ -1,36 +1,39 @@
 import { useState } from "react";
 
 import { MdOutlineDashboard } from "react-icons/md";
-import { LuHandPlatter } from "react-icons/lu";
-import { PiUserCircle } from "react-icons/pi";
-import { PiBookOpenLight } from "react-icons/pi";
-import { RiShieldUserLine } from "react-icons/ri";
-import { LuBookUser } from "react-icons/lu";
-import { IoBicycle } from "react-icons/io5";
-import { AiOutlineShop } from "react-icons/ai";
-import { TfiAnnouncement } from "react-icons/tfi";
+import { FaRegUser } from "react-icons/fa";
+import { FaRegFolderOpen } from "react-icons/fa";
+import { RiFolderOpenLine } from "react-icons/ri";
+import { RiKey2Fill } from "react-icons/ri";
+import { LuShieldCheck } from "react-icons/lu";
+import { LuCookingPot } from "react-icons/lu";
+import { MdLogout } from "react-icons/md";
 
-import { LuPiggyBank } from "react-icons/lu";
-import { FaBarsProgress } from "react-icons/fa6";
-import { IoSettingsOutline } from "react-icons/io5";
-
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import logo from "../../../public/Images/logo.png";
+import { Button } from "@mui/material";
 
 export default function Sidebar() {
   const [selected, setSelected] = useState(null);
+  const navigate = useNavigate();
 
   const handleSelect = (path) => {
     setSelected(path);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    navigate("/sign-in", { replace: true });
+  };
+
   return (
-    <div className="bg-gradient-to-r from-[#F98108] via-[#FFBD61] to-[#EEDB07] h-screen w-full">
+    <div className="bg-white h-screen w-full">
       <div className="flex flex-col items-center gap-4 py-5">
-        <Link to="/" className="flex items-center text-[#FAFAFA]">
+        <Link to="/" className="flex items-center">
           <img src={logo} alt="" className="h-12 mx-auto" />
-          <p>CleanaX</p>
         </Link>
         <hr className="w-24 border border-[#E0E1E2]" />
       </div>
@@ -39,69 +42,38 @@ export default function Sidebar() {
           {
             to: "/dashboard",
             icon: <MdOutlineDashboard fontSize={24} />,
-            label: "Dashboard",
+            label: "Overview",
           },
           {
-            to: "/provider-stats",
-            icon: <LuHandPlatter fontSize={24} />,
-            label: "Provider Stats",
+            to: "/all-employee",
+            icon: <FaRegUser fontSize={24} />,
+            label: "All Employee",
           },
           {
-            to: "/user-stats",
-            icon: <PiUserCircle fontSize={24} />,
-            label: "User Stats",
+            to: "/create-project",
+            icon: <FaRegFolderOpen fontSize={24} />,
+            label: "Create Project",
           },
           {
-            to: "/order-details",
-            icon: <PiBookOpenLight fontSize={24} />,
-            label: "Order Details",
+            to: "/running-project",
+            icon: <RiFolderOpenLine fontSize={24} />,
+            label: "Running Project",
           },
           {
-            to: "/user-details",
-            icon: <RiShieldUserLine fontSize={24} />,
-            label: "User Details",
+            to: "/change-password",
+            icon: <RiKey2Fill fontSize={24} />,
+            label: "Change Password",
           },
           {
-            to: "/provider-details",
-            icon: <LuBookUser fontSize={24} />,
-            label: "Provider Details",
+            to: "/privacy-policy",
+            icon: <LuShieldCheck fontSize={24} />,
+            label: "Privacy Policy",
           },
           {
-            to: "/rider-details",
-            icon: <IoBicycle fontSize={24} />,
-            label: "Rider Details",
+            to: "/add-break-time",
+            icon: <LuCookingPot fontSize={24} />,
+            label: "Add Break Time",
           },
-          {
-            to: "/transactions",
-            icon: <LuPiggyBank fontSize={24} />,
-            label: "Transactions",
-          },
-          {
-            to: "/services",
-            icon: <FaBarsProgress fontSize={24} />,
-            label: "Services",
-          },
-          {
-            to: "/stores",
-            icon: <AiOutlineShop fontSize={24} />,
-            label: "Stores",
-          },
-          {
-            to: "/advertisement",
-            icon: <TfiAnnouncement fontSize={24} />,
-            label: "Advertisement",
-          },
-          {
-            to: "/settings",
-            icon: <IoSettingsOutline fontSize={24} />,
-            label: "Settings",
-          },
-
-          // {
-          //   to: "/edit-profile",
-          //   icon: <FaRegUserCircle fontSize={24} />,
-          //   label: "Edit Profile",
-          // },
         ].map(({ to, icon, label }) => (
           <NavLink
             key={to}
@@ -111,18 +83,37 @@ export default function Sidebar() {
               `flex items-center font-medium gap-3 text-base py-2 px-2 rounded-md 
               ${
                 isActive
-                  ? "bg-[#fff] text-[#000]"
+                  ? "bg-[#3F80AE] text-[#fff]"
                   : selected === to
-                  ? "bg-[#fff] text-black"
-                  : "text-white"
+                  ? "bg-[#3F80AE] text-black"
+                  : "text-black"
               }
-              hover:bg-[#ffffffb6] hover:text-[#000]`
+              hover:bg-[#70a4c7] hover:text-[#fff]`
             }
           >
             {icon}
             <p>{label}</p>
           </NavLink>
         ))}
+        <Button
+          sx={{
+            color: "black",
+            textTransform: "none",
+            padding: "8px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-start",
+            marginLeft: "4px",
+            gap: "12px",
+            ":hover": { backgroundColor: "#70a4c7", color: "#fff" },
+          }}
+          onClick={() => {
+            handleLogout();
+          }}
+        >
+          <MdLogout className="text-2xl" />
+          <p className="font-semibold">Log Out</p>
+        </Button>
       </div>
     </div>
   );
