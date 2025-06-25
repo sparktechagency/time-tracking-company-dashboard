@@ -14,7 +14,6 @@ import OrderDetails from "../Dashboard/OrderDetails";
 import UserDetails from "../Dashboard/UserDetails";
 import ProviderDetails from "../Dashboard/ProviderDetails";
 import RiderDetails from "../Dashboard/RiderDetails";
-import Transactions from "../Dashboard/Transactions";
 import Services from "../Dashboard/Services";
 import Stores from "../Dashboard/Stores";
 import StoreDetails from "../Dashboard/StoreDetails";

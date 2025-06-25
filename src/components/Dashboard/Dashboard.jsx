@@ -5,26 +5,26 @@ import { LuFolderKanban } from "react-icons/lu";
 
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
-import CustomerStatisticsBarChart from "../Chart/CustomerStatisticsBarChart";
-import RevenuePieChart from "../Chart/RevenuePieChart";
-import ServiceStats from "../UI/ServiceStats";
+import ProjectPieChart from "../Chart/ProjectPieChart";
+import EmployeeAreaChart from "../Chart/EmployeeAreaChart";
+import ProjectBarChart from "../Chart/ProjectBarChart";
 
 export default function Dashboard() {
-  const [revenueByYear, setRevenueByYear] = useState(2025);
-  const [productsByYear, setProductsByYear] = useState(2025);
-  const [serviceByYear, setServiceByYear] = useState(2025);
+  const [totalProjectByYear, setTotalProjectByYear] = useState(2025);
+  const [completedProjectByYear, setCompletedProjectByYear] = useState(2025);
+  const [totalEmployeeByYear, setTotalEmployeeByYear] = useState(2025);
 
-  const handleRevenueYearChange = (event) => {
+  const handleTotalProjectYearChange = (event) => {
     // console.log("year", event.target.value);
-    setRevenueByYear(event.target.value);
+    setTotalProjectByYear(event.target.value);
   };
-  const handleProductsYearChange = (event) => {
+  const handleCompletedProjectYearChange = (event) => {
     // console.log("year", event.target.value);
-    setProductsByYear(event.target.value);
+    setCompletedProjectByYear(event.target.value);
   };
-  const handleServiceYearChange = (event) => {
+  const handleTotalEmployeeYearChange = (event) => {
     // console.log("year", event.target.value);
-    setServiceByYear(event.target.value);
+    setTotalEmployeeByYear(event.target.value);
   };
 
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
@@ -60,19 +60,9 @@ export default function Dashboard() {
         <div className="bg-white shadow-xl w-full px-5 py-3">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-3">
-              <p className="text-[#333333] font-semibold text-xl">
-                Customer Statistics
+              <p className="text-[#333333] font-semibold text-xl capitalize">
+                total employee monthly
               </p>
-              <div className="flex items-center gap-10">
-                <div className="flex items-center gap-2">
-                  <p className="bg-[#FF3B30] size-4 rounded-full"></p>
-                  <p>Service Providers</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="bg-[#5856D6] size-4 rounded-full"></p>
-                  <p>Users</p>
-                </div>
-              </div>
             </div>
             <div className="w-28">
               <FormControl fullWidth>
@@ -87,9 +77,9 @@ export default function Dashboard() {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={revenueByYear}
+                  value={totalEmployeeByYear}
                   label="Year"
-                  onChange={handleRevenueYearChange}
+                  onChange={handleTotalEmployeeYearChange}
                   className="h-8"
                 >
                   <MenuItem value={2025}>2025</MenuItem>
@@ -100,17 +90,19 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="mt-5">
-            <CustomerStatisticsBarChart selectedYear={revenueByYear} />
+            <EmployeeAreaChart selectedYear={totalEmployeeByYear} />
           </div>
         </div>
         <div className="flex items-center gap-3 w-full">
-          {/* revenue */}
+          {/* Project Bar Chart */}
           <div
             className="bg-white shadow-xl flex-1 px-5 py-3"
             style={{ minHeight: 325 }}
           >
             <div className="flex items-center justify-between">
-              <p className="text-[#333333] font-semibold text-xl">Revenue</p>
+              <p className="text-[#333333] font-semibold text-xl">
+                Total Project Monthly
+              </p>
               <div className="w-28">
                 <FormControl fullWidth>
                   <InputLabel id="revenue-year-label">
@@ -124,9 +116,9 @@ export default function Dashboard() {
                   <Select
                     labelId="revenue-year-label"
                     id="revenue-year-select"
-                    value={productsByYear}
+                    value={totalProjectByYear}
                     label="Year"
-                    onChange={handleProductsYearChange}
+                    onChange={handleTotalProjectYearChange}
                     className="h-8"
                   >
                     <MenuItem value={2025}>2025</MenuItem>
@@ -137,33 +129,22 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex mt-5 h-full">
-              <RevenuePieChart selectedYear={productsByYear} />
-              <div className="flex flex-col items-start gap-5 w-full">
-                <div className="flex items-center gap-2 w-28">
-                  <p className="bg-[#32ADE6] w-4 h-4 rounded-full"></p>
-                  <p>My Profit</p>
-                </div>
-                <div className="flex items-center gap-2 w-32">
-                  <p className="bg-[#AF52DE] w-4 h-4 rounded-full"></p>
-                  <p>Total Profit</p>
-                </div>
-              </div>
+              <ProjectBarChart selectedYear={totalProjectByYear} />
             </div>
           </div>
 
-          {/* service stats */}
+          {/* Project Pie Chart */}
           <div
             className="bg-white shadow-xl flex-1 px-5 py-3"
-            style={{ minHeight: 325 }}
+            style={{ minHeight: 320 }}
           >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[#1A1A1A] font-semibold text-xl">
-                  Service Stats
+                  Complete Project Monthly
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <p className="bg-[#FF9500] w-4 h-4 rounded-full"></p>
-                  <p>Orders</p>
+                  <p className="font-medium">20% complete daily</p>
                 </div>
               </div>
               <div className="w-28">
@@ -179,9 +160,9 @@ export default function Dashboard() {
                   <Select
                     labelId="service-year-label"
                     id="service-year-select"
-                    value={serviceByYear}
+                    value={completedProjectByYear}
                     label="Year"
-                    onChange={handleServiceYearChange}
+                    onChange={handleCompletedProjectYearChange}
                     className="h-8"
                   >
                     <MenuItem value={2025}>2025</MenuItem>
@@ -191,7 +172,7 @@ export default function Dashboard() {
                 </FormControl>
               </div>
             </div>
-            <ServiceStats selectedYear={serviceByYear} />
+            <ProjectPieChart selectedYear={completedProjectByYear} />
           </div>
         </div>
       </div>
