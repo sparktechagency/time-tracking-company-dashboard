@@ -4,23 +4,14 @@ import SignIn from "../../pages/SignIn";
 import ForgotPassword from "../../pages/ForgotPassword";
 import DashboardLayout from "../Layout/DashboardLayout";
 import Dashboard from "../Dashboard/Dashboard";
-import Notifications from "../Dashboard/Notifications";
-import PrivacyPolicy from "../Dashboard/PrivacyPolicy";
 import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
-import ProviderStats from "../Dashboard/ProviderStats";
 import UserStats from "../Dashboard/UserStats";
 import OrderDetails from "../Dashboard/OrderDetails";
 import UserDetails from "../Dashboard/UserDetails";
 import ProviderDetails from "../Dashboard/ProviderDetails";
 import RiderDetails from "../Dashboard/RiderDetails";
-import Services from "../Dashboard/Services";
-import Stores from "../Dashboard/Stores";
-import StoreDetails from "../Dashboard/StoreDetails";
-import Advertisement from "../Dashboard/Advertisement";
-import Settings from "../Dashboard/Settings";
-import Profile from "../Dashboard/Settings/Profile";
-import ChangePassword from "../Dashboard/Settings/ChangePassword";
+import EmployeeStats from "../Dashboard/EmployeeStats";
 
 const router = createBrowserRouter([
   {
@@ -57,7 +48,7 @@ const router = createBrowserRouter([
           },
           {
             path: "all-employee",
-            element: <ProviderStats />,
+            element: <EmployeeStats />,
           },
           {
             path: "create-project",
