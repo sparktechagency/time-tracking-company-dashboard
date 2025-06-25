@@ -6,7 +6,7 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import Dashboard from "../Dashboard/Dashboard";
 import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
-import UserStats from "../Dashboard/UserStats";
+import UserStats from "../Dashboard/CreateProject";
 import OrderDetails from "../Dashboard/OrderDetails";
 import UserDetails from "../Dashboard/UserDetails";
 import ProviderDetails from "../Dashboard/ProviderDetails";
