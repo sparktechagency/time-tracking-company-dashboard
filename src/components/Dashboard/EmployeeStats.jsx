@@ -15,6 +15,7 @@ import {
   TablePagination,
   Button,
   Modal,
+  IconButton,
 } from "@mui/material";
 import { GoEye } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
@@ -324,43 +325,48 @@ export default function EmployeeStats() {
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
                       <div className="flex items-center justify-center gap-2">
-                        <Button
+                        <IconButton
                           size="small"
                           onClick={() => handleViewDetails(employee)}
                           sx={{
-                            textTransform: "none",
                             color: "#fff",
                             fontSize: "20px",
                             bgcolor: "#658065",
-                            // width: "5px",
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "4px",
                           }}
                         >
                           <GoEye />
-                        </Button>
-                        <Button
+                        </IconButton>
+                        <IconButton
                           size="small"
                           onClick={() => handleOpenBlockModal(employee)}
                           sx={{
-                            textTransform: "none",
                             color: "#fff",
                             fontSize: "20px",
                             bgcolor: "#3F80AE",
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "4px",
                           }}
                         >
                           <SlLock />
-                        </Button>
-                        <Button
+                        </IconButton>
+                        <IconButton
                           size="small"
                           onClick={() => handleOpenDeleteModal(employee)}
                           sx={{
-                            textTransform: "none",
                             color: "#fff",
                             fontSize: "20px",
                             bgcolor: "#CC0505",
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "4px",
                           }}
                         >
                           <AiTwotoneDelete />
-                        </Button>
+                        </IconButton>
                       </div>
                     </TableCell>
                   </TableRow>

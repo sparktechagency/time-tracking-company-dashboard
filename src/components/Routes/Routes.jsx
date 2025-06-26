@@ -13,6 +13,8 @@ import RunningProjects from "../Dashboard/RunningProjects";
 import ChangePassword from "../Dashboard/ChangePassword";
 import AddBreakTime from "../Dashboard/AddBreakTime";
 import PrivacyPolicy from "../Dashboard/ProviderDetails";
+import Notifications from "../Dashboard/Notifications";
+import Profile from "../Dashboard/Profile";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +72,14 @@ const router = createBrowserRouter([
           {
             path: "add-break-time",
             element: <AddBreakTime />,
+          },
+          {
+            path: "notifications",
+            element: <Notifications />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
           },
         ],
       },
