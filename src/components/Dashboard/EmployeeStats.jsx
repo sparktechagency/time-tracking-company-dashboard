@@ -1,0 +1,515 @@
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
+import {
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  TableContainer,
+  Table,
+  Paper,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
+  Button,
+  Modal,
+} from "@mui/material";
+import { GoEye } from "react-icons/go";
+import { SlLock } from "react-icons/sl";
+import { AiTwotoneDelete } from "react-icons/ai";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateRangePicker } from "@mui/x-date-pickers-pro/StaticDateRangePicker";
+
+import dayjs from "dayjs";
+
+const employeeData = [
+  {
+    serial: 1,
+    name: "John Doe",
+    email: "johndoe@sparklaundry.com",
+    contact: "+1234567890",
+    designation: "Manager",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/men/1.jpg", // Example image URL
+  },
+  {
+    serial: 2,
+    name: "Jane Smith",
+    email: "janesmith@freshcleaners.com",
+    contact: "+1234567891",
+    designation: "Operations Manager",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/women/2.jpg", // Example image URL
+  },
+  {
+    serial: 3,
+    name: "Robert Johnson",
+    email: "robert.johnson@officeshine.com",
+    contact: "+1234567892",
+    designation: "Team Leader",
+    status: "Blocked",
+    image: "https://randomuser.me/api/portraits/men/3.jpg", // Example image URL
+  },
+  {
+    serial: 4,
+    name: "Michael Brown",
+    email: "michaelbrown@quickcarwash.com",
+    contact: "+1234567893",
+    designation: "Branch Manager",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/men/4.jpg", // Example image URL
+  },
+  {
+    serial: 5,
+    name: "Emily Davis",
+    email: "emily.davis@ecolaundry.com",
+    contact: "+1234567894",
+    designation: "Supervisor",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/women/5.jpg", // Example image URL
+  },
+  {
+    serial: 6,
+    name: "Alice Wilson",
+    email: "alice.wilson@brighthomeclean.com",
+    contact: "+1234567895",
+    designation: "Cleaner",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/women/6.jpg", // Example image URL
+  },
+  {
+    serial: 7,
+    name: "James Taylor",
+    email: "james.taylor@primeofficecare.com",
+    contact: "+1234567896",
+    designation: "Office Manager",
+    status: "Blocked",
+    image: "https://randomuser.me/api/portraits/men/7.jpg", // Example image URL
+  },
+  {
+    serial: 8,
+    name: "David Martinez",
+    email: "david.martinez@speedywash.com",
+    contact: "+1234567897",
+    designation: "CEO",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/men/8.jpg", // Example image URL
+  },
+  {
+    serial: 9,
+    name: "Sophia Lee",
+    email: "sophia.lee@greenlaundry.com",
+    contact: "+1234567898",
+    designation: "Manager",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/women/9.jpg", // Example image URL
+  },
+  {
+    serial: 10,
+    name: "Mason Harris",
+    email: "mason.harris@cleansweephomes.com",
+    contact: "+1234567899",
+    designation: "Supervisor",
+    status: "Active",
+    image: "https://randomuser.me/api/portraits/men/10.jpg", // Example image URL
+  },
+];
+
+const shortcutsItems = [
+  {
+    label: "This Week",
+    getValue: () => {
+      const today = dayjs();
+      return [today.startOf("week"), today.endOf("week")];
+    },
+  },
+  {
+    label: "Last Week",
+    getValue: () => {
+      const today = dayjs();
+      const prevWeek = today.subtract(7, "day");
+      return [prevWeek.startOf("week"), prevWeek.endOf("week")];
+    },
+  },
+  {
+    label: "Last 7 Days",
+    getValue: () => {
+      const today = dayjs();
+      return [today.subtract(7, "day"), today];
+    },
+  },
+  {
+    label: "Current Month",
+    getValue: () => {
+      const today = dayjs();
+      return [today.startOf("month"), today.endOf("month")];
+    },
+  },
+  {
+    label: "Next Month",
+    getValue: () => {
+      const today = dayjs();
+      const startOfNextMonth = today.endOf("month").add(1, "day");
+      return [startOfNextMonth, startOfNextMonth.endOf("month")];
+    },
+  },
+  { label: "Reset", getValue: () => [null, null] },
+];
+
+export default function EmployeeStats() {
+  const [searchText, setSearchText] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all"); // changed
+  const [filteredUsers, setFilteredUsers] = useState(employeeData);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openDetailsModal, setOpenDetailsModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [openBlockModal, setOpenBlockModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const handleFilterStatus = (e) => {
+    setSelectedStatus(e.target.value);
+    filterUsers(searchText, e.target.value);
+  };
+
+  const filterUsers = (search, type) => {
+    let filtered = employeeData;
+
+    if (type && type !== "all") {
+      filtered = filtered.filter((employee) => employee.status === type);
+    }
+
+    setFilteredUsers(filtered);
+  };
+
+  const handleViewDetails = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenDetailsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenDetailsModal(false);
+    setSelectedEmployee(null);
+  };
+
+  const handleOpenBlockModal = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenBlockModal(true);
+  };
+
+  const handleCloseBlockModal = () => {
+    setOpenBlockModal(false);
+    setSelectedEmployee(null);
+  };
+
+  const handleOpenDeleteModal = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedEmployee(null);
+  };
+
+  const handleBlockEmployee = () => {
+    console.log(`Blocked ${selectedEmployee.name}`);
+    handleCloseBlockModal();
+  };
+
+  const handleDeleteEmployee = () => {
+    console.log(`Deleted ${selectedEmployee.name}`);
+    handleCloseDeleteModal();
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
+      <div className="flex items-center justify-between">
+        <p className="text-[#1c1c1c] font-medium text-2xl capitalize">
+          all employee
+        </p>
+        <FormControl sx={{ minWidth: 200 }} size="small">
+          <InputLabel>Status</InputLabel>
+          <Select
+            label="Status"
+            value={selectedStatus}
+            onChange={handleFilterStatus}
+            sx={{ height: "50px" }}
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Blocked">Blocked</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
+
+      <div className="mt-6">
+        <TableContainer component={Paper} sx={{ border: "1px solid #e6e6e6" }}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#C3D8E6" }}>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Serial No.
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Name
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Email Address
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Contact No.
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Designation
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Status
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((employee) => (
+                  <TableRow key={employee.eiinNo}>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {employee.serial}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {employee.name}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {employee.email}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {employee.contact}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {employee.designation}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      <div
+                        style={{
+                          backgroundColor:
+                            employee.status === "Active"
+                              ? "#008000"
+                              : employee.status === "Blocked"
+                              ? "#CC0505"
+                              : "gray",
+                          color: "white",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          textAlign: "center",
+                        }}
+                      >
+                        {employee.status}
+                      </div>
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          size="small"
+                          onClick={() => handleViewDetails(employee)}
+                          sx={{
+                            textTransform: "none",
+                            color: "#fff",
+                            fontSize: "20px",
+                            bgcolor: "#658065",
+                            // width: "5px",
+                          }}
+                        >
+                          <GoEye />
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => handleOpenBlockModal(employee)}
+                          sx={{
+                            textTransform: "none",
+                            color: "#fff",
+                            fontSize: "20px",
+                            bgcolor: "#3F80AE",
+                          }}
+                        >
+                          <SlLock />
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => handleOpenDeleteModal(employee)}
+                          sx={{
+                            textTransform: "none",
+                            color: "#fff",
+                            fontSize: "20px",
+                            bgcolor: "#CC0505",
+                          }}
+                        >
+                          <AiTwotoneDelete />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredUsers.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </div>
+
+      {/* Details Modal */}
+      <Modal
+        open={openDetailsModal}
+        onClose={handleCloseModal}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          className="bg-[#efefef] p-6 rounded-lg shadow-lg"
+          style={{ width: "1000px" }}
+        >
+          {selectedEmployee && (
+            <div>
+              {/* Top */}
+              <div className="flex flex-col gap-2 bg-white p-4 rounded-lg">
+                <p className="font-medium mb-1">View Details</p>
+                <div className="flex gap-10">
+                  <img
+                    src={selectedEmployee.image}
+                    alt={selectedEmployee.name}
+                    style={{
+                      width: "160px",
+                      height: "160px",
+                      marginBottom: "10px",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <strong>Name:</strong> {selectedEmployee.name}
+                    </div>
+                    <div>
+                      <strong>Email:</strong> {selectedEmployee.email}
+                    </div>
+                    <div>
+                      <strong>Contact:</strong> {selectedEmployee.contact}
+                    </div>
+                    <div>
+                      <strong>Designation:</strong>{" "}
+                      {selectedEmployee.designation}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Mid */}
+              <div className="my-3 rounded-lg">
+                <div className="bg-white">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <StaticDateRangePicker
+                      slotProps={{
+                        shortcuts: {
+                          items: shortcutsItems,
+                        },
+                        actionBar: { actions: [] },
+                      }}
+                      calendars={2}
+                    />
+                  </LocalizationProvider>
+                </div>
+              </div>
+              {/* Low */}
+              <div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          )}
+          <Button onClick={handleCloseModal} sx={{ marginTop: 2 }}>
+            Close
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Block Confirmation Modal */}
+      <Modal open={openBlockModal} onClose={handleCloseBlockModal}>
+        <div className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto mt-40">
+          <p className="mb-8">
+            Are you sure you want to block{" "}
+            <span className="font-medium text-lg">
+              {selectedEmployee?.name}
+            </span>
+            ?
+          </p>
+          <Button
+            onClick={handleBlockEmployee}
+            variant="contained"
+            sx={{ bgcolor: "#3F80AE", color: "white", marginRight: 2 }}
+          >
+            Yes, Block
+          </Button>
+          <Button
+            onClick={handleCloseBlockModal}
+            variant="outlined"
+            sx={{ color: "#3F80AE", borderColor: "#3F80AE" }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={openDeleteModal} onClose={handleCloseDeleteModal}>
+        <div className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto mt-40">
+          <h3 className="mb-8">
+            Are you sure you want to delete{" "}
+            <span className="font-medium text-lg">
+              {selectedEmployee?.name}
+            </span>
+            ?
+          </h3>
+          <Button
+            onClick={handleDeleteEmployee}
+            variant="contained"
+            sx={{ bgcolor: "#CC0505", color: "white", marginRight: 2 }}
+          >
+            Yes, Delete
+          </Button>
+          <Button
+            onClick={handleCloseDeleteModal}
+            variant="outlined"
+            sx={{ color: "#CC0505", borderColor: "#CC0505" }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
