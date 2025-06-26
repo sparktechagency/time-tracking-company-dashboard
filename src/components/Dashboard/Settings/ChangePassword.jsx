@@ -19,7 +19,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="bg-[#fff9e3] h-screen p-20">
+    <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
       <Box sx={{ maxWidth: 500, margin: "auto", padding: 2 }}>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-3">

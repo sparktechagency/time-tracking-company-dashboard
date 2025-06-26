@@ -7,11 +7,11 @@ import Dashboard from "../Dashboard/Dashboard";
 import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
 import UserStats from "../Dashboard/CreateProject";
-import UserDetails from "../Dashboard/UserDetails";
 import ProviderDetails from "../Dashboard/ProviderDetails";
 import RiderDetails from "../Dashboard/RiderDetails";
 import EmployeeStats from "../Dashboard/EmployeeStats";
 import RunningProjects from "../Dashboard/RunningProjects";
+import ChangePassword from "../Dashboard/ChangePassword";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
           },
           {
             path: "change-password",
-            element: <UserDetails />,
+            element: <ChangePassword />,
           },
           {
             path: "privacy-policy",
