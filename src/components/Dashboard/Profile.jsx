@@ -1,34 +1,21 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Avatar,
   Box,
   Button,
-  Container,
-  Grid,
   IconButton,
   InputAdornment,
   TextField,
-  Typography,
 } from "@mui/material";
 import { FiEdit } from "react-icons/fi";
 import { RiLockPasswordFill } from "react-icons/ri";
-import profileImg from "../../../../public/Images/profile.png";
+import profileImg from "../../../public/Images/profile.png";
 
 export default function Profile() {
   const [name, setName] = useState("Charlene Reed");
   const [email, setEmail] = useState("charlenereed@gmail.com");
   const [dob, setDob] = useState("25 January 1990");
   const [userName, setUserName] = useState("Charlene Reed");
-  const [password, setPassword] = useState("**********");
-  const [presentAddress, setPresentAddress] = useState(
-    "San Jose, California, USA"
-  );
-  const [permanentAddress, setPermanentAddress] = useState(
-    "San Jose, California, USA"
-  );
-  const [postalCode, setPostalCode] = useState("45962");
-  const [city, setCity] = useState("San Jose");
-  const [country, setCountry] = useState("USA");
+
   const [profileImage, setProfileImage] = useState(profileImg);
 
   const handleFileChange = (e) => {
@@ -48,17 +35,11 @@ export default function Profile() {
       email,
       dob,
       userName,
-      password,
-      presentAddress,
-      permanentAddress,
-      postalCode,
-      city,
-      country,
     });
   };
 
   return (
-    <div className="flex gap-10 w-full bg-[#fff9e3] h-screen p-20">
+    <div className="flex gap-10 w-full bg-[#efefef] h-[91vh] p-20 rounded-lg">
       {/* Profile Header */}
       <div className="relative">
         <div className="bg-[#efefef]">
@@ -67,9 +48,9 @@ export default function Profile() {
         <IconButton
           sx={{
             position: "absolute",
-            top: "20%",
+            top: "15%",
             right: 0,
-            backgroundColor: "#2A4BA0",
+            backgroundColor: "#fff",
             borderRadius: "50%",
             padding: "8px",
           }}
@@ -81,7 +62,7 @@ export default function Profile() {
             onChange={handleFileChange}
             style={{ display: "none" }}
           />
-          <FiEdit fontSize={20} className="text-white" />
+          <FiEdit fontSize={20} className="text-[#3F80AE]" />
         </IconButton>
       </div>
 
@@ -113,26 +94,7 @@ export default function Profile() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </div>
-          <div className="w-full">
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <RiLockPasswordFill fontSize="medium" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-5">
+          </div>{" "}
           <div className="w-full">
             <TextField
               label="Date of Birth"
@@ -141,17 +103,20 @@ export default function Profile() {
               onChange={(e) => setDob(e.target.value)}
             />
           </div>
-          <div className="w-full">
+        </div>
+
+        <div className="flex items-center gap-5">
+          {/* <div className="w-full">
             <TextField
               label="Present Address"
               fullWidth
               value={presentAddress}
               onChange={(e) => setPresentAddress(e.target.value)}
             />
-          </div>
+          </div> */}
         </div>
 
-        <div className="flex items-center gap-5">
+        {/* <div className="flex items-center gap-5">
           <div className="w-full">
             <TextField
               label="Permanent Address"
@@ -168,9 +133,9 @@ export default function Profile() {
               onChange={(e) => setCity(e.target.value)}
             />
           </div>
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-5">
+        {/* <div className="flex items-center gap-5">
           <div className="w-full">
             <TextField
               label="Postal Code"
@@ -187,14 +152,14 @@ export default function Profile() {
               onChange={(e) => setCountry(e.target.value)}
             />
           </div>
-        </div>
+        </div> */}
 
-        <Box mt={2}>
+        <div>
           <Button
             fullWidth
             variant="contained"
             sx={{
-              backgroundColor: "#232323",
+              backgroundColor: "#3F80AE",
               color: "white",
               textTransform: "none",
               padding: "10px",
@@ -205,7 +170,7 @@ export default function Profile() {
           >
             Save & Update
           </Button>
-        </Box>
+        </div>
       </div>
     </div>
   );

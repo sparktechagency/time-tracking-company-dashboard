@@ -1,8 +1,4 @@
-import { Button, IconButton } from "@mui/material";
-import React from "react";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { RiEditLine } from "react-icons/ri";
-import { RiDeleteBin6Line } from "react-icons/ri";
 
 const notifications = [
   {
@@ -29,19 +25,19 @@ const notifications = [
 
 export default function Notifications() {
   return (
-    <div className="px-10 py-6 bg-[#fbfbfb] h-[93vh]">
+    <div className="px-10 py-6 bg-[#efefef] h-[91vh] rounded-lg">
       <div>
         <p className="text-[#1c1c1c] font-semibold text-xl">Notifications</p>
         <p className="text-[#7d7d7d]">Manage and process notifications</p>
       </div>
-      <div className="bg-white p-8 mt-7">
+      <div className="bg-white p-8 mt-7 rounded-lg">
         {notifications.map((notification) => (
           <div
             key={notification.id}
             className="flex justify-between items-center p-4 my-2 rounded-xl bg-gray-100"
           >
             <div className="flex items-center gap-5">
-              <div className="bg-[#000000] p-3 rounded-lg">
+              <div className="bg-[#3F80AE] p-3 rounded-lg">
                 <IoIosNotificationsOutline
                   fontSize={28}
                   className="text-[#EAEDF6]"
