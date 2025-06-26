@@ -5,31 +5,12 @@ import {
   Select,
   FormControl,
   InputLabel,
-  TableContainer,
-  Table,
-  Paper,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   TablePagination,
-  Button,
-  Modal,
-  IconButton,
 } from "@mui/material";
-import { GoEye } from "react-icons/go";
-import { SlLock } from "react-icons/sl";
-import { AiTwotoneDelete } from "react-icons/ai";
-import { IoIosTrendingDown } from "react-icons/io";
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
-import dayjs from "dayjs";
-import { DateCalendar } from "@mui/x-date-pickers";
-import EmployeeLineChart from "../Chart/EmployeeLineChart";
-import EmployeeWorkingPieChart from "../Chart/EmployeeWorkingPieChart";
-import EmployeeBreakPieChart from "../Chart/EmployeeBreakPieChart";
+import EmployeeDetailsModal from "../Modals/EmployeeDetailsModal";
+import BlockConfirmationModal from "../Modals/BlockConfirmationModal";
+import DeleteConfirmationModal from "../Modals/DeleteConfirmationModal";
+import EmployeeTable from "../UI/EmployeeTable";
 
 const employeeData = [
   {
@@ -126,7 +107,7 @@ const employeeData = [
 
 export default function EmployeeStats() {
   const [searchText, setSearchText] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all"); // changed
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [filteredUsers, setFilteredUsers] = useState(employeeData);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -221,122 +202,14 @@ export default function EmployeeStats() {
       </div>
 
       <div className="mt-6">
-        <TableContainer component={Paper} sx={{ border: "1px solid #e6e6e6" }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#C3D8E6" }}>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Serial No.
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Name
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Email Address
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Contact No.
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Designation
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Status
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((employee) => (
-                  <TableRow key={employee.eiinNo}>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.serial}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.name}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.email}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.contact}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.designation}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <div
-                        style={{
-                          backgroundColor:
-                            employee.status === "Active"
-                              ? "#008000"
-                              : employee.status === "Blocked"
-                              ? "#CC0505"
-                              : "gray",
-                          color: "white",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {employee.status}
-                      </div>
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <div className="flex items-center justify-center gap-2">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleViewDetails(employee)}
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            bgcolor: "#658065",
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          <GoEye />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleOpenBlockModal(employee)}
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            bgcolor: "#3F80AE",
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          <SlLock />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleOpenDeleteModal(employee)}
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            bgcolor: "#CC0505",
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          <AiTwotoneDelete />
-                        </IconButton>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <EmployeeTable
+          filteredUsers={filteredUsers}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          handleViewDetails={handleViewDetails}
+          handleOpenBlockModal={handleOpenBlockModal}
+          handleOpenDeleteModal={handleOpenDeleteModal}
+        />
 
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -350,238 +223,27 @@ export default function EmployeeStats() {
       </div>
 
       {/* Details Modal */}
-      <Modal
-        open={openDetailsModal}
-        onClose={handleCloseModal}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="bg-[#efefef] p-6 rounded-lg shadow-lg"
-          style={{ width: "1200px" }}
-        >
-          {selectedEmployee && (
-            <div>
-              {/* Top */}
-              <div className="flex flex-col gap-2 bg-white p-4 rounded-lg">
-                <p className="font-medium mb-1">View Details</p>
-                <div className="flex gap-10">
-                  <img
-                    src={selectedEmployee.image}
-                    alt={selectedEmployee.name}
-                    style={{
-                      width: "150px",
-                      height: "150px",
-                      marginBottom: "10px",
-                      borderRadius: "10px",
-                    }}
-                  />
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <strong>Name:</strong> {selectedEmployee.name}
-                    </div>
-                    <div>
-                      <strong>Email:</strong> {selectedEmployee.email}
-                    </div>
-                    <div>
-                      <strong>Contact:</strong> {selectedEmployee.contact}
-                    </div>
-                    <div>
-                      <strong>Designation:</strong>{" "}
-                      {selectedEmployee.designation}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Mid */}
-              <div className="my-3 rounded-lg flex gap-3">
-                <div className="flex bg-white w-full p-5">
-                  <div className="flex flex-col gap-1">
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                        width: "100%",
-                      }}
-                    >
-                      Today
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                        width: "100%",
-                      }}
-                    >
-                      Yesterday
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                        width: "100%",
-                      }}
-                    >
-                      This Week
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                      }}
-                    >
-                      Last Week
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                      }}
-                    >
-                      This Month
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                    <Button
-                      sx={{
-                        textTransform: "none",
-                        color: "#545454",
-                        fontSize: "10px",
-                      }}
-                    >
-                      Next Month
-                    </Button>
-                    <hr className="border-[#E6E6E6]" />
-                  </div>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateCalendar sx={{ height: 300, width: "80%" }} />
-                  </LocalizationProvider>
-                </div>
-                <div className="bg-white h-3/5 p-5 w-full">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateCalendar sx={{ height: 300, width: "80%" }} />
-                  </LocalizationProvider>
-                </div>
-              </div>
-
-              {/* Low */}
-              <div className="flex items-center gap-3">
-                {/* left */}
-                <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
-                  <p className="text-lg font-semibold text-[#3F80AE]">
-                    Today Working
-                  </p>
-
-                  <EmployeeWorkingPieChart />
-
-                  <div className="flex items-center gap-5">
-                    <div className="flex items-center gap-2 text-red-500 font-semibold">
-                      <p className="text-sm">-120 Min</p>
-                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
-                    </div>{" "}
-                    <div className="flex items-center gap-2 text-red-500  font-semibold">
-                      <p className="text-sm">-3.25%</p>
-                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* mid */}
-                <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
-                  <p className="text-lg font-semibold text-[#3F80AE]">
-                    Today Break
-                  </p>
-
-                  <EmployeeBreakPieChart />
-
-                  <div className="flex items-center gap-5">
-                    <div className="flex items-center gap-2 text-green-600 font-semibold">
-                      <p className="text-sm">120 Min</p>
-                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
-                    </div>{" "}
-                    <div className="flex items-center gap-2 text-green-600  font-semibold">
-                      <p className="text-sm">3.25%</p>
-                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-                {/* chart */}
-                <div className="w-full bg-white p-4 rounded-lg">
-                  <EmployeeLineChart />
-                </div>
-                <div>
-                  <div></div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Modal>
+      <EmployeeDetailsModal
+        openDetailsModal={openDetailsModal}
+        handleCloseModal={handleCloseModal}
+        selectedEmployee={selectedEmployee}
+      />
 
       {/* Block Confirmation Modal */}
-      <Modal open={openBlockModal} onClose={handleCloseBlockModal}>
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto mt-40">
-          <p className="mb-8">
-            Are you sure you want to block{" "}
-            <span className="font-medium text-lg">
-              {selectedEmployee?.name}
-            </span>
-            ?
-          </p>
-          <Button
-            onClick={handleBlockEmployee}
-            variant="contained"
-            sx={{ bgcolor: "#3F80AE", color: "white", marginRight: 2 }}
-          >
-            Yes, Block
-          </Button>
-          <Button
-            onClick={handleCloseBlockModal}
-            variant="outlined"
-            sx={{ color: "#3F80AE", borderColor: "#3F80AE" }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </Modal>
+      <BlockConfirmationModal
+        openBlockModal={openBlockModal}
+        handleCloseBlockModal={handleCloseBlockModal}
+        handleBlockEmployee={handleBlockEmployee}
+        selectedEmployee={selectedEmployee}
+      />
 
       {/* Delete Confirmation Modal */}
-      <Modal open={openDeleteModal} onClose={handleCloseDeleteModal}>
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto mt-40">
-          <h3 className="mb-8">
-            Are you sure you want to delete{" "}
-            <span className="font-medium text-lg">
-              {selectedEmployee?.name}
-            </span>
-            ?
-          </h3>
-          <Button
-            onClick={handleDeleteEmployee}
-            variant="contained"
-            sx={{ bgcolor: "#CC0505", color: "white", marginRight: 2 }}
-          >
-            Yes, Delete
-          </Button>
-          <Button
-            onClick={handleCloseDeleteModal}
-            variant="outlined"
-            sx={{ color: "#CC0505", borderColor: "#CC0505" }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </Modal>
+      <DeleteConfirmationModal
+        openDeleteModal={openDeleteModal}
+        handleCloseDeleteModal={handleCloseDeleteModal}
+        selectedEmployee={selectedEmployee}
+        handleDeleteEmployee={handleDeleteEmployee}
+      />
     </div>
   );
 }
