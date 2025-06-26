@@ -57,7 +57,7 @@ export default function Sidebar() {
           {
             to: "/running-project",
             icon: <RiFolderOpenLine fontSize={24} />,
-            label: "Running Project",
+            label: "Running Projects",
           },
           {
             to: "/change-password",
