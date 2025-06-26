@@ -65,15 +65,15 @@ const PrivacyPolicy = () => {
   // }
 
   return (
-    <div className="min-h-[90vh] bg-[#fbfbfb] rounded-lg py-1 px-4">
+    <div className="min-h-[90vh] bg-[#efefef] rounded-lg py-1 px-4">
       <div className="p-2 rounded">
         <div className="flex items-center justify-between py-4">
-          <h1 className="text-4xl font-bold  text-[#222021]">Privacy Policy</h1>
+          <h1 className="text-2xl font-bold  text-[#222021]">Privacy Policy</h1>
           <Button
             onClick={handleOnSave}
             sx={{
               width: "150px",
-              bgcolor: "#262626",
+              bgcolor: "#3F80AE",
               color: "white",
               textTransform: "none",
               height: "40px",

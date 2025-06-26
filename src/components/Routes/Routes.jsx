@@ -7,14 +7,13 @@ import Dashboard from "../Dashboard/Dashboard";
 import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
 import UserStats from "../Dashboard/CreateProject";
-import ProviderDetails from "../Dashboard/ProviderDetails";
 import EmployeeStats from "../Dashboard/EmployeeStats";
 import RunningProjects from "../Dashboard/RunningProjects";
 import ChangePassword from "../Dashboard/ChangePassword";
 import AddBreakTime from "../Dashboard/AddBreakTime";
-import PrivacyPolicy from "../Dashboard/ProviderDetails";
 import Notifications from "../Dashboard/Notifications";
 import Profile from "../Dashboard/Profile";
+import PrivacyPolicy from "../Dashboard/PrivacyPolicy";
 
 const router = createBrowserRouter([
   {
