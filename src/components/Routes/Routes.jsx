@@ -8,10 +8,10 @@ import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
 import UserStats from "../Dashboard/CreateProject";
 import ProviderDetails from "../Dashboard/ProviderDetails";
-import RiderDetails from "../Dashboard/RiderDetails";
 import EmployeeStats from "../Dashboard/EmployeeStats";
 import RunningProjects from "../Dashboard/RunningProjects";
 import ChangePassword from "../Dashboard/ChangePassword";
+import AddBreakTime from "../Dashboard/AddBreakTime";
 
 const router = createBrowserRouter([
   {
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
           },
           {
             path: "add-break-time",
-            element: <RiderDetails />,
+            element: <AddBreakTime />,
           },
         ],
       },

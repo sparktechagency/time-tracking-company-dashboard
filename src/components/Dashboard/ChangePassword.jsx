@@ -36,8 +36,8 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="px-10 py-8 bg-[#efefef] h-[91vh]">
-      <div className="bg-white py-40">
+    <div className="px-10 py-8 bg-[#efefef] h-[91vh] rounded-lg">
+      <div className="bg-white py-40 rounded-lg">
         <div className="max-w-2xl mx-auto bg-[#C3D8E6] p-20 rounded-lg">
           <p className="text-3xl font-semibold text-center pb-10 text-[#39749E]">
             Change Your Password
