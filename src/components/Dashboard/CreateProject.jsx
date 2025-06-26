@@ -6,8 +6,21 @@ import {
   Chip,
   Box,
   InputAdornment,
+  Modal,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { LuImageUp } from "react-icons/lu";
+
+const employees = [
+  "John Doe",
+  "Jane Smith",
+  "Alice Johnson",
+  "Bob Brown",
+  "Charlie Davis",
+  "David Lee",
+];
 
 const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
@@ -16,6 +29,10 @@ const CreateProject = () => {
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeInput, setEmployeeInput] = useState("");
   const [image, setImage] = useState(null);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   const handleAddEmployee = () => {
     if (employeeInput && !assignedEmployees.includes(employeeInput)) {
@@ -40,7 +57,21 @@ const CreateProject = () => {
     console.log("Project Time:", projectTime);
     console.log("Project Description:", projectDescription);
     console.log("Assigned Employees:", assignedEmployees);
-    console.log("Employee Input:", employeeInput);
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setFilteredEmployees(
+      employees.filter((employee) =>
+        employee.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+  };
+
+  const handleSelectEmployee = (employee) => {
+    setEmployeeInput(employee);
+    setOpenModal(false); // Close the modal after selection
   };
 
   return (
@@ -143,9 +174,9 @@ const CreateProject = () => {
             <div className="flex">
               <TextField
                 label="Mention Employee"
-                variant="outlined"
                 fullWidth
                 value={employeeInput}
+                onClick={() => setOpenModal(true)}
                 onChange={(e) => setEmployeeInput(e.target.value)}
               />
             </div>
@@ -181,6 +212,54 @@ const CreateProject = () => {
       >
         Sent Now
       </Button>
+
+      {/* Modal for Employee Selection */}
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            padding: 4,
+            borderRadius: 2,
+          }}
+        >
+          <TextField
+            label="Search Here"
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearch}
+            sx={{ marginBottom: "10px", bgcolor: "#ECF2F7" }}
+          />
+          <List>
+            {filteredEmployees.map((employee, index) => (
+              <ListItem
+                button
+                key={index}
+                onClick={() => handleSelectEmployee(employee)}
+              >
+                <ListItemText
+                  primary={employee}
+                  sx={{
+                    bgcolor: "#ECF2F7",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                />
+              </ListItem>
+            ))}
+          </List>
+          {/* <Button onClick={() => setOpenModal(false)} color="primary">
+            Cancel
+          </Button> */}
+        </Box>
+      </Modal>
     </div>
   );
 };
