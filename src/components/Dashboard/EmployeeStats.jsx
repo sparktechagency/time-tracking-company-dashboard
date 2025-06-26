@@ -20,12 +20,16 @@ import {
 import { GoEye } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
 import { AiTwotoneDelete } from "react-icons/ai";
+import { IoIosTrendingDown } from "react-icons/io";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { StaticDateRangePicker } from "@mui/x-date-pickers-pro/StaticDateRangePicker";
 
 import dayjs from "dayjs";
+import { DateCalendar } from "@mui/x-date-pickers";
+import EmployeeLineChart from "../Chart/EmployeeLineChart";
+import EmployeeWorkingPieChart from "../Chart/EmployeeWorkingPieChart";
+import EmployeeBreakPieChart from "../Chart/EmployeeBreakPieChart";
 
 const employeeData = [
   {
@@ -118,47 +122,6 @@ const employeeData = [
     status: "Active",
     image: "https://randomuser.me/api/portraits/men/10.jpg", // Example image URL
   },
-];
-
-const shortcutsItems = [
-  {
-    label: "This Week",
-    getValue: () => {
-      const today = dayjs();
-      return [today.startOf("week"), today.endOf("week")];
-    },
-  },
-  {
-    label: "Last Week",
-    getValue: () => {
-      const today = dayjs();
-      const prevWeek = today.subtract(7, "day");
-      return [prevWeek.startOf("week"), prevWeek.endOf("week")];
-    },
-  },
-  {
-    label: "Last 7 Days",
-    getValue: () => {
-      const today = dayjs();
-      return [today.subtract(7, "day"), today];
-    },
-  },
-  {
-    label: "Current Month",
-    getValue: () => {
-      const today = dayjs();
-      return [today.startOf("month"), today.endOf("month")];
-    },
-  },
-  {
-    label: "Next Month",
-    getValue: () => {
-      const today = dayjs();
-      const startOfNextMonth = today.endOf("month").add(1, "day");
-      return [startOfNextMonth, startOfNextMonth.endOf("month")];
-    },
-  },
-  { label: "Reset", getValue: () => [null, null] },
 ];
 
 export default function EmployeeStats() {
@@ -398,7 +361,7 @@ export default function EmployeeStats() {
       >
         <div
           className="bg-[#efefef] p-6 rounded-lg shadow-lg"
-          style={{ width: "1000px" }}
+          style={{ width: "1200px" }}
         >
           {selectedEmployee && (
             <div>
@@ -410,13 +373,13 @@ export default function EmployeeStats() {
                     src={selectedEmployee.image}
                     alt={selectedEmployee.name}
                     style={{
-                      width: "160px",
-                      height: "160px",
+                      width: "150px",
+                      height: "150px",
                       marginBottom: "10px",
                       borderRadius: "10px",
                     }}
                   />
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     <div>
                       <strong>Name:</strong> {selectedEmployee.name}
                     </div>
@@ -434,32 +397,135 @@ export default function EmployeeStats() {
                 </div>
               </div>
               {/* Mid */}
-              <div className="my-3 rounded-lg">
-                <div className="bg-white">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <StaticDateRangePicker
-                      slotProps={{
-                        shortcuts: {
-                          items: shortcutsItems,
-                        },
-                        actionBar: { actions: [] },
+              <div className="my-3 rounded-lg flex gap-3">
+                <div className="flex bg-white w-full p-5">
+                  <div className="flex flex-col gap-1">
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                        width: "100%",
                       }}
-                      calendars={2}
-                    />
+                    >
+                      Today
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      Yesterday
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      This Week
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                      }}
+                    >
+                      Last Week
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                      }}
+                    >
+                      This Month
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        color: "#545454",
+                        fontSize: "10px",
+                      }}
+                    >
+                      Next Month
+                    </Button>
+                    <hr className="border-[#E6E6E6]" />
+                  </div>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateCalendar sx={{ height: 300, width: "80%" }} />
+                  </LocalizationProvider>
+                </div>
+                <div className="bg-white h-3/5 p-5 w-full">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateCalendar sx={{ height: 300, width: "80%" }} />
                   </LocalizationProvider>
                 </div>
               </div>
+
               {/* Low */}
-              <div>
-                <div></div>
-                <div></div>
-                <div></div>
+              <div className="flex items-center gap-3">
+                {/* left */}
+                <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
+                  <p className="text-lg font-semibold text-[#3F80AE]">
+                    Today Working
+                  </p>
+
+                  <EmployeeWorkingPieChart />
+
+                  <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-2 text-red-500 font-semibold">
+                      <p className="text-sm">-120 Min</p>
+                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                    </div>{" "}
+                    <div className="flex items-center gap-2 text-red-500  font-semibold">
+                      <p className="text-sm">-3.25%</p>
+                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* mid */}
+                <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
+                  <p className="text-lg font-semibold text-[#3F80AE]">
+                    Today Break
+                  </p>
+
+                  <EmployeeBreakPieChart />
+
+                  <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-2 text-green-600 font-semibold">
+                      <p className="text-sm">120 Min</p>
+                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                    </div>{" "}
+                    <div className="flex items-center gap-2 text-green-600  font-semibold">
+                      <p className="text-sm">3.25%</p>
+                      <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+                {/* chart */}
+                <div className="w-full bg-white p-4 rounded-lg">
+                  <EmployeeLineChart />
+                </div>
+                <div>
+                  <div></div>
+                </div>
               </div>
             </div>
           )}
-          <Button onClick={handleCloseModal} sx={{ marginTop: 2 }}>
-            Close
-          </Button>
         </div>
       </Modal>
 
