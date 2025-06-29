@@ -14,10 +14,26 @@ export default function EmployeeDetailsModal({
   selectedEmployee,
 }) {
   const [activeButton, setActiveButton] = useState("list");
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
   };
+
+  const handleSelectDate = () => {
+    setShowCalendar(true);
+  };
+
+  const handleCloseCalendar = (date) => {
+    setShowCalendar(false);
+    console.log("Selected Date:", date);
+  };
+
+  // const handleDateSelect = (date) => {
+  //   setShowCalendar(false);
+  //   console.log("Selected Date:", date);
+  // };
+
   return (
     <div>
       <Modal
@@ -30,7 +46,7 @@ export default function EmployeeDetailsModal({
         }}
       >
         <div
-          className="bg-[#efefef] p-4 rounded-lg shadow-lg"
+          className="bg-[#efefef] p-4 rounded-lg shadow-lg relative"
           style={{ width: "1200px" }}
         >
           {selectedEmployee && (
@@ -67,32 +83,58 @@ export default function EmployeeDetailsModal({
                 </div>
               </div>
               {/* Mid */}
-              <div className="flex items-center justify-end gap-3 my-2">
-                <Button
-                  sx={{
-                    textTransform: "none",
-                    bgcolor:
-                      activeButton === "list" ? "#3F80AE" : "transparent",
-                    border: "1px solid #3F80AE",
-                    width: "100px",
-                    color: activeButton === "list" ? "white" : "#3F80AE",
-                  }}
-                  onClick={() => handleButtonClick("list")}
+              <div className="flex items-center">
+                <div
+                  className={`flex items-center ${
+                    activeButton === "map" ? "justify-between" : "justify-end"
+                  } w-full`}
                 >
-                  List View
-                </Button>
-                <Button
-                  sx={{
-                    textTransform: "none",
-                    bgcolor: activeButton === "map" ? "#3F80AE" : "transparent",
-                    border: "1px solid #3F80AE",
-                    width: "100px",
-                    color: activeButton === "map" ? "white" : "#3F80AE",
-                  }}
-                  onClick={() => handleButtonClick("map")}
-                >
-                  Map View
-                </Button>
+                  {activeButton === "map" && (
+                    <div>
+                      <Button
+                        sx={{
+                          textTransform: "none",
+                          bgcolor:
+                            activeButton === "list" ? "#3F80AE" : "transparent",
+                          border: "1px solid #3F80AE",
+                          width: "100px",
+                          color: activeButton === "list" ? "white" : "#3F80AE",
+                        }}
+                        onClick={handleSelectDate}
+                      >
+                        Select Date
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 my-2">
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        bgcolor:
+                          activeButton === "list" ? "#3F80AE" : "transparent",
+                        border: "1px solid #3F80AE",
+                        width: "100px",
+                        color: activeButton === "list" ? "white" : "#3F80AE",
+                      }}
+                      onClick={() => handleButtonClick("list")}
+                    >
+                      List View
+                    </Button>
+                    <Button
+                      sx={{
+                        textTransform: "none",
+                        bgcolor:
+                          activeButton === "map" ? "#3F80AE" : "transparent",
+                        border: "1px solid #3F80AE",
+                        width: "100px",
+                        color: activeButton === "map" ? "white" : "#3F80AE",
+                      }}
+                      onClick={() => handleButtonClick("map")}
+                    >
+                      Map View
+                    </Button>
+                  </div>
+                </div>
               </div>
               {activeButton === "list" && (
                 <div>
@@ -238,6 +280,27 @@ export default function EmployeeDetailsModal({
                   ></iframe>
                 </div>
               )}
+            </div>
+          )}
+          {showCalendar && (
+            <div className="flex justify-center mt-4 absolute bottom-32 left-32">
+              <div className="bg-white p-4 rounded-lg shadow-md">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateCalendar sx={{ height: 280, width: "100%" }} />
+                </LocalizationProvider>
+                <div className="flex justify-center mt-3">
+                  <Button
+                    sx={{
+                      bgcolor: "#3F80AE",
+                      color: "white",
+                      textTransform: "none",
+                    }}
+                    onClick={handleCloseCalendar}
+                  >
+                    Choose Date
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </div>
