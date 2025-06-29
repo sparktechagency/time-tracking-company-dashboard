@@ -14,6 +14,8 @@ import AddBreakTime from "../Dashboard/AddBreakTime";
 import Notifications from "../Dashboard/Notifications";
 import Profile from "../Dashboard/Profile";
 import PrivacyPolicy from "../Dashboard/PrivacyPolicy";
+import Subscription from "../Dashboard/Subscription";
+import EmployeeLeaveList from "../Dashboard/EmployeeLeaveList";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +73,14 @@ const router = createBrowserRouter([
           {
             path: "add-break-time",
             element: <AddBreakTime />,
+          },
+          {
+            path: "subscription",
+            element: <Subscription />,
+          },
+          {
+            path: "employee-leave-list",
+            element: <EmployeeLeaveList />,
           },
           {
             path: "notifications",

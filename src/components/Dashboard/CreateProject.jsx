@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   TextField,
@@ -12,6 +13,10 @@ import {
   ListItemText,
 } from "@mui/material";
 import { LuImageUp } from "react-icons/lu";
+import { AiOutlineAudioMuted } from "react-icons/ai";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 const employees = [
   "John Doe",
@@ -29,6 +34,8 @@ const CreateProject = () => {
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeInput, setEmployeeInput] = useState("");
   const [image, setImage] = useState(null);
+  const [audio, setAudio] = useState(null);
+  const [error, setError] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,6 +58,18 @@ const CreateProject = () => {
       setImage(URL.createObjectURL(file));
     }
   };
+  const handleAudioUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type.startsWith("audio/")) {
+        setAudio(URL.createObjectURL(file));
+        setError("");
+      } else {
+        setError("Please upload a valid audio file.");
+        setAudio(null);
+      }
+    }
+  };
 
   const handleSubmit = () => {
     console.log("Project Name:", projectName);
@@ -71,7 +90,7 @@ const CreateProject = () => {
 
   const handleSelectEmployee = (employee) => {
     setEmployeeInput(employee);
-    setOpenModal(false); // Close the modal after selection
+    setOpenModal(false);
   };
 
   return (
@@ -91,6 +110,18 @@ const CreateProject = () => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
+            <p className="font-medium">Start Date</p>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker label="Select Start Date" />
+            </LocalizationProvider>
+          </div>
+          <div className="w-full flex flex-col gap-2">
+            <p className="font-medium">End Date</p>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker label="Select End Date" />
+            </LocalizationProvider>
+          </div>
+          <div className="w-full flex flex-col gap-2">
             <p className="font-medium">Project Time</p>
             <TextField
               label="Enter Project Time"
@@ -101,7 +132,7 @@ const CreateProject = () => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <p className="font-medium">Upload Project Photo</p>
+            <p className="font-medium">Upload Photo</p>
             <Button
               variant="outlined"
               component="label"
@@ -122,6 +153,27 @@ const CreateProject = () => {
               <input type="file" hidden onChange={handleImageUpload} />
             </Button>
           </div>
+          <div className="w-full flex flex-col gap-2">
+            <p className="font-medium">Upload Audio</p>
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              sx={{
+                height: "55px",
+                textTransform: "none",
+                outline: "none",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
+            >
+              <div className="text-[#3F80AE]">
+                <AiOutlineAudioMuted className="text-xl" />
+              </div>
+
+              <input type="file" hidden onChange={handleAudioUpload} />
+            </Button>
+          </div>
           {image && (
             <div className="w-1/2">
               <img
@@ -136,6 +188,17 @@ const CreateProject = () => {
                   objectFit: "cover",
                 }}
               />
+            </div>
+          )}
+          {/* Display error message if any */}
+          {error && <Typography color="error">{error}</Typography>}
+
+          {/* Display uploaded audio */}
+          {audio && (
+            <div className="mt-3">
+              <audio controls>
+                <source src={audio} type="audio/mp3" />
+              </audio>
             </div>
           )}
         </div>
@@ -210,7 +273,7 @@ const CreateProject = () => {
           bgcolor: "#3F80AE",
         }}
       >
-        Sent Now
+        Send Now
       </Button>
 
       {/* Modal for Employee Selection */}
