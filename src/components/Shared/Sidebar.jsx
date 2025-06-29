@@ -8,6 +8,8 @@ import { RiKey2Fill } from "react-icons/ri";
 import { LuShieldCheck } from "react-icons/lu";
 import { LuCookingPot } from "react-icons/lu";
 import { MdLogout } from "react-icons/md";
+import { FaPodcast } from "react-icons/fa6";
+import { SiSpeedtest } from "react-icons/si";
 
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
@@ -73,6 +75,16 @@ export default function Sidebar() {
             to: "/add-break-time",
             icon: <LuCookingPot fontSize={24} />,
             label: "Add Break Time",
+          },
+          {
+            to: "/subscription",
+            icon: <FaPodcast fontSize={24} />,
+            label: "Subscription",
+          },
+          {
+            to: "/employee-leave-list",
+            icon: <SiSpeedtest fontSize={24} />,
+            label: "Employee Leave List",
           },
         ].map(({ to, icon, label }) => (
           <NavLink
