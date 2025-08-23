@@ -16,6 +16,7 @@ import Profile from "../Dashboard/Profile";
 import PrivacyPolicy from "../Dashboard/PrivacyPolicy";
 import Subscription from "../Dashboard/Subscription";
 import EmployeeLeaveList from "../Dashboard/EmployeeLeaveList";
+import ProtectedRoute from "../../utils/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,11 @@ const router = createBrowserRouter([
       },
       {
         path: "",
-        element: <DashboardLayout />,
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "/",
