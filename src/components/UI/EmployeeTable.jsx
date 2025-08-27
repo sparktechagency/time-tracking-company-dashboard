@@ -52,10 +52,10 @@ export default function EmployeeTable({
           <TableBody>
             {filteredUsers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((employee) => (
+              .map((employee, index) => (
                 <TableRow key={employee.eiinNo}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {Number(employee.index) + 1}
+                    {index + 1 + page * rowsPerPage}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     {employee.name}
@@ -64,24 +64,21 @@ export default function EmployeeTable({
                     {employee.email}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.contact}
+                    {employee.phone}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     {employee.designation}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <div
+                      className="text-white text-center px-2 py-1 rounded capitalize"
                       style={{
                         backgroundColor:
-                          employee.status === "Active"
+                          employee.status === "active"
                             ? "#008000"
-                            : employee.status === "Blocked"
+                            : employee.status === "blocked"
                             ? "#CC0505"
                             : "gray",
-                        color: "white",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        textAlign: "center",
                       }}
                     >
                       {employee.status}

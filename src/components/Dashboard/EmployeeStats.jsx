@@ -19,6 +19,7 @@ import AddEmployeeModal from "../Modals/AddEmployeeModal";
 export default function EmployeeStats() {
   const { data: allEmployeeData, isLoading } = useAllEmployeeQuery();
   const allEmployee = allEmployeeData?.data?.data || [];
+  console.log("allEmployee", allEmployee);
 
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
