@@ -41,6 +41,19 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       providesTags: ["user"],
     }),
+    getSubscriptionPlans: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        return {
+          url: "/subscriptions/plans",
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["user"],
+    }),
   }),
 });
 
@@ -48,4 +61,5 @@ export const {
   useDashboardOverviewQuery,
   useEmployeeByMonthQuery,
   useCompanyByMonthQuery,
+  useGetSubscriptionPlansQuery,
 } = dashboardApi;
