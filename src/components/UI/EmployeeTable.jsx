@@ -1,4 +1,13 @@
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { GoEye } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
@@ -46,7 +55,7 @@ export default function EmployeeTable({
               .map((employee) => (
                 <TableRow key={employee.eiinNo}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.serial}
+                    {Number(employee.index) + 1}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     {employee.name}

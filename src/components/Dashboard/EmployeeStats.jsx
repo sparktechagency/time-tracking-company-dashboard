@@ -6,129 +6,50 @@ import {
   FormControl,
   InputLabel,
   TablePagination,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 import EmployeeDetailsModal from "../Modals/EmployeeDetailsModal";
 import BlockConfirmationModal from "../Modals/BlockConfirmationModal";
 import DeleteConfirmationModal from "../Modals/DeleteConfirmationModal";
 import EmployeeTable from "../UI/EmployeeTable";
-
-const employeeData = [
-  {
-    serial: 1,
-    name: "John Doe",
-    email: "johndoe@sparklaundry.com",
-    contact: "+1234567890",
-    designation: "Manager",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/men/1.jpg", // Example image URL
-  },
-  {
-    serial: 2,
-    name: "Jane Smith",
-    email: "janesmith@freshcleaners.com",
-    contact: "+1234567891",
-    designation: "Operations Manager",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/women/2.jpg", // Example image URL
-  },
-  {
-    serial: 3,
-    name: "Robert Johnson",
-    email: "robert.johnson@officeshine.com",
-    contact: "+1234567892",
-    designation: "Team Leader",
-    status: "Blocked",
-    image: "https://randomuser.me/api/portraits/men/3.jpg", // Example image URL
-  },
-  {
-    serial: 4,
-    name: "Michael Brown",
-    email: "michaelbrown@quickcarwash.com",
-    contact: "+1234567893",
-    designation: "Branch Manager",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/men/4.jpg", // Example image URL
-  },
-  {
-    serial: 5,
-    name: "Emily Davis",
-    email: "emily.davis@ecolaundry.com",
-    contact: "+1234567894",
-    designation: "Supervisor",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/women/5.jpg", // Example image URL
-  },
-  {
-    serial: 6,
-    name: "Alice Wilson",
-    email: "alice.wilson@brighthomeclean.com",
-    contact: "+1234567895",
-    designation: "Cleaner",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/women/6.jpg", // Example image URL
-  },
-  {
-    serial: 7,
-    name: "James Taylor",
-    email: "james.taylor@primeofficecare.com",
-    contact: "+1234567896",
-    designation: "Office Manager",
-    status: "Blocked",
-    image: "https://randomuser.me/api/portraits/men/7.jpg", // Example image URL
-  },
-  {
-    serial: 8,
-    name: "David Martinez",
-    email: "david.martinez@speedywash.com",
-    contact: "+1234567897",
-    designation: "CEO",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/men/8.jpg", // Example image URL
-  },
-  {
-    serial: 9,
-    name: "Sophia Lee",
-    email: "sophia.lee@greenlaundry.com",
-    contact: "+1234567898",
-    designation: "Manager",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/women/9.jpg", // Example image URL
-  },
-  {
-    serial: 10,
-    name: "Mason Harris",
-    email: "mason.harris@cleansweephomes.com",
-    contact: "+1234567899",
-    designation: "Supervisor",
-    status: "Active",
-    image: "https://randomuser.me/api/portraits/men/10.jpg", // Example image URL
-  },
-];
+import { useAllEmployeeQuery } from "../../Redux/api/usersApi";
+import AddEmployeeModal from "../Modals/AddEmployeeModal";
 
 export default function EmployeeStats() {
+  const { data: allEmployeeData, isLoading } = useAllEmployeeQuery();
+  const allEmployee = allEmployeeData?.data?.data || [];
+
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [filteredUsers, setFilteredUsers] = useState(employeeData);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openBlockModal, setOpenBlockModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openAddEmployeeModal, setOpenAddEmployeeModal] = useState(false);
+
+  const filterUsers = () => {
+    let filtered = allEmployee;
+
+    if (selectedStatus && selectedStatus !== "all") {
+      filtered = filtered.filter(
+        (employee) => employee.status === selectedStatus
+      );
+    }
+
+    if (searchText) {
+      filtered = filtered.filter((employee) =>
+        employee.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    return filtered;
+  };
 
   const handleFilterStatus = (e) => {
     setSelectedStatus(e.target.value);
-    filterUsers(searchText, e.target.value);
-  };
-
-  const filterUsers = (search, type) => {
-    let filtered = employeeData;
-
-    if (type && type !== "all") {
-      filtered = filtered.filter((employee) => employee.status === type);
-    }
-
-    setFilteredUsers(filtered);
   };
 
   const handleViewDetails = (employee) => {
@@ -156,9 +77,22 @@ export default function EmployeeStats() {
     setOpenDeleteModal(true);
   };
 
+  const handleOpenAddEmployeeModal = () => {
+    setOpenAddEmployeeModal(true);
+  };
+
+  const handleCloseAddEmployeeModal = () => {
+    setOpenAddEmployeeModal(false);
+  };
+
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
     setSelectedEmployee(null);
+  };
+
+  const handleAddEmployee = (employeeData) => {
+    console.log("Employee added:", employeeData);
+    handleCloseAddEmployeeModal();
   };
 
   const handleBlockEmployee = () => {
@@ -180,25 +114,51 @@ export default function EmployeeStats() {
     setPage(0);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  const filteredUsers = filterUsers();
+
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
       <div className="flex items-center justify-between">
         <p className="text-[#1c1c1c] font-medium text-2xl capitalize">
           all employee
         </p>
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <InputLabel>Status</InputLabel>
-          <Select
-            label="Status"
-            value={selectedStatus}
-            onChange={handleFilterStatus}
-            sx={{ height: "50px" }}
+
+        <div className="flex items-center gap-4">
+          <Button
+            sx={{
+              bgcolor: "#3F80AE",
+              color: "#fff",
+              textTransform: "none",
+              padding: "10px 20px",
+              "&:hover": { bgcolor: "#70a4c7" },
+            }}
+            onClick={handleOpenAddEmployeeModal}
           >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Blocked">Blocked</MenuItem>
-          </Select>
-        </FormControl>
+            + Add Employee
+          </Button>
+
+          <FormControl sx={{ minWidth: 200 }} size="small">
+            <InputLabel>Status</InputLabel>
+            <Select
+              label="Status"
+              value={selectedStatus}
+              onChange={handleFilterStatus}
+              sx={{ height: "50px" }}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="Blocked">Blocked</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </div>
 
       <div className="mt-6">
@@ -243,6 +203,11 @@ export default function EmployeeStats() {
         handleCloseDeleteModal={handleCloseDeleteModal}
         selectedEmployee={selectedEmployee}
         handleDeleteEmployee={handleDeleteEmployee}
+      />
+      <AddEmployeeModal
+        openAddEmployeeModal={openAddEmployeeModal}
+        handleCloseAddEmployeeModal={handleCloseAddEmployeeModal}
+        handleAddEmployee={handleAddEmployee}
       />
     </div>
   );

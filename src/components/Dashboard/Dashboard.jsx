@@ -16,7 +16,7 @@ import CompanyBarChart from "../Chart/CompanyBarChart";
 
 export default function Dashboard() {
   const [totalProjectByYear, setTotalProjectByYear] = useState(2025);
-  const [completedProjectByYear, setCompletedProjectByYear] = useState(2025);
+  // const [completedProjectByYear, setCompletedProjectByYear] = useState(2025);
   const [totalEmployeeByYear, setTotalEmployeeByYear] = useState(2025);
 
   const {
@@ -42,10 +42,9 @@ export default function Dashboard() {
     // console.log("year", event.target.value);
     setTotalProjectByYear(event.target.value);
   };
-  const handleCompletedProjectYearChange = (event) => {
-    // console.log("year", event.target.value);
-    setCompletedProjectByYear(event.target.value);
-  };
+  // const handleCompletedProjectYearChange = (event) => {
+  //   setCompletedProjectByYear(event.target.value);
+  // };
   const handleTotalEmployeeYearChange = (event) => {
     // console.log("year", event.target.value);
     setTotalEmployeeByYear(event.target.value);
@@ -178,7 +177,7 @@ export default function Dashboard() {
           </div>
 
           {/* Project Pie Chart */}
-          <div
+          {/* <div
             className="bg-white shadow-xl flex-1 px-5 py-3"
             style={{ minHeight: 320 }}
           >
@@ -198,7 +197,6 @@ export default function Dashboard() {
                       <p>
                         <LuCalendar fontSize={20} />
                       </p>
-                      {/* <p className="text-sm">Year</p> */}
                     </div>
                   </InputLabel>
                   <Select
@@ -217,7 +215,7 @@ export default function Dashboard() {
               </div>
             </div>
             <ProjectPieChart selectedYear={completedProjectByYear} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
