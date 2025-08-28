@@ -7,27 +7,58 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 import ProjectPieChart from "../Chart/ProjectPieChart";
 import EmployeeAreaChart from "../Chart/EmployeeAreaChart";
-import ProjectBarChart from "../Chart/ProjectBarChart";
+import {
+  useCompanyByMonthQuery,
+  useDashboardOverviewQuery,
+  useEmployeeByMonthQuery,
+} from "../../Redux/api/dashboardApi";
+import CompanyBarChart from "../Chart/CompanyBarChart";
 
 export default function Dashboard() {
   const [totalProjectByYear, setTotalProjectByYear] = useState(2025);
-  const [completedProjectByYear, setCompletedProjectByYear] = useState(2025);
+  // const [completedProjectByYear, setCompletedProjectByYear] = useState(2025);
   const [totalEmployeeByYear, setTotalEmployeeByYear] = useState(2025);
+
+  const {
+    data: dashboardOverviewData,
+    isLoading,
+    isError,
+  } = useDashboardOverviewQuery();
+
+  const dashboardData = dashboardOverviewData?.data;
+  // console.log("dashboardData", dashboardData);
+
+  const { data: employeeByMonthData } =
+    useEmployeeByMonthQuery(totalEmployeeByYear);
+  const employeeMonthData = employeeByMonthData?.data;
+  // console.log("employeeMonthData", employeeMonthData);
+
+  const { data: companyByMonthData } =
+    useCompanyByMonthQuery(totalProjectByYear);
+  const companyMonthData = companyByMonthData?.data;
+  console.log("companyMonthData", companyMonthData);
 
   const handleTotalProjectYearChange = (event) => {
     // console.log("year", event.target.value);
     setTotalProjectByYear(event.target.value);
   };
-  const handleCompletedProjectYearChange = (event) => {
-    // console.log("year", event.target.value);
-    setCompletedProjectByYear(event.target.value);
-  };
+  // const handleCompletedProjectYearChange = (event) => {
+  //   setCompletedProjectByYear(event.target.value);
+  // };
   const handleTotalEmployeeYearChange = (event) => {
     // console.log("year", event.target.value);
     setTotalEmployeeByYear(event.target.value);
   };
 
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading data.</div>;
+  }
 
   return (
     <div className="bg-[#efefef] px-10 py-3 h-[92vh] w-full">
@@ -38,21 +69,27 @@ export default function Dashboard() {
               <FaRegUser />
               <p className="font-medium text-lg">Total Employee</p>
             </div>
-            <p className="text-[#333333] text-3xl font-semibold">320</p>
+            <p className="text-[#333333] text-3xl font-semibold">
+              {dashboardData?.totalEmployees}
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
             <div className="flex items-center gap-2 text-[#333333]">
               <LuFolderKanban />
-              <p className="font-medium text-lg">Total Project</p>
+              <p className="font-medium text-lg">Total Company</p>
             </div>
-            <p className="text-[#333333] text-3xl font-semibold">134</p>
+            <p className="text-[#333333] text-3xl font-semibold">
+              {dashboardData?.totalCompany}
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
             <div className="flex items-center gap-2 text-[#333333]">
               <LuFolderKanban />
-              <p className="font-medium text-lg">Complete Project</p>
+              <p className="font-medium text-lg">Total Revenue</p>
             </div>
-            <p className="text-[#333] text-3xl font-semibold">403</p>
+            <p className="text-[#333] text-3xl font-semibold">
+              {dashboardData?.totalRevenue}
+            </p>
           </div>
         </div>
       </div>
@@ -61,7 +98,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-3">
               <p className="text-[#333333] font-semibold text-xl capitalize">
-                total employee monthly
+                total revenue
               </p>
             </div>
             <div className="w-28">
@@ -90,18 +127,21 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="mt-5">
-            <EmployeeAreaChart selectedYear={totalEmployeeByYear} />
+            <EmployeeAreaChart
+              selectedYear={totalEmployeeByYear}
+              employeeMonthData={employeeMonthData}
+            />
           </div>
         </div>
         <div className="flex items-center gap-3 w-full">
           {/* Project Bar Chart */}
           <div
-            className="bg-white shadow-xl flex-1 px-5 py-3"
+            className="bg-white shadow-xl flex-2 px-5 py-3"
             style={{ minHeight: 325 }}
           >
             <div className="flex items-center justify-between">
               <p className="text-[#333333] font-semibold text-xl">
-                Total Project Monthly
+                Total Company
               </p>
               <div className="w-28">
                 <FormControl fullWidth>
@@ -129,12 +169,15 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex mt-5 h-full">
-              <ProjectBarChart selectedYear={totalProjectByYear} />
+              <CompanyBarChart
+                selectedYear={totalProjectByYear}
+                companyMonthData={companyMonthData}
+              />
             </div>
           </div>
 
           {/* Project Pie Chart */}
-          <div
+          {/* <div
             className="bg-white shadow-xl flex-1 px-5 py-3"
             style={{ minHeight: 320 }}
           >
@@ -154,7 +197,6 @@ export default function Dashboard() {
                       <p>
                         <LuCalendar fontSize={20} />
                       </p>
-                      {/* <p className="text-sm">Year</p> */}
                     </div>
                   </InputLabel>
                   <Select
@@ -173,7 +215,7 @@ export default function Dashboard() {
               </div>
             </div>
             <ProjectPieChart selectedYear={completedProjectByYear} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

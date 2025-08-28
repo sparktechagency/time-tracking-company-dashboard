@@ -73,7 +73,7 @@ export default function EmployeeDetailsModal({
                       <strong>Email:</strong> {selectedEmployee.email}
                     </div>
                     <div>
-                      <strong>Contact:</strong> {selectedEmployee.contact}
+                      <strong>Contact:</strong> {selectedEmployee.phone}
                     </div>
                     <div>
                       <strong>Designation:</strong>{" "}

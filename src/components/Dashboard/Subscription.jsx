@@ -1,39 +1,37 @@
-import { Card, CardContent, Button } from "@mui/material";
-
-const subscriptionData = [
-  {
-    id: 1,
-    title: "Pro",
-    price: 200,
-    description:
-      "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum eligendi facilis laudantium. Dolores suscipit cumque, doloribus sit earum quas voluptate.",
-  },
-  {
-    id: 2,
-    title: "Premium",
-    price: 500,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae magnam esse nemo eius maiores eos, ipsum illo quos totam iure amet voluptas iste laborum dolor.",
-  },
-];
-
-const selectedSubscription = (subscription) => {
-  console.log("Selected Subscription", subscription);
-};
+import { Card, CardContent, Button, CircularProgress } from "@mui/material";
+import { useGetSubscriptionPlansQuery } from "../../Redux/api/dashboardApi";
+import { GoDotFill } from "react-icons/go";
 
 export default function Subscription() {
+  const { data: subscriptionPlansData, isLoading } =
+    useGetSubscriptionPlansQuery();
+  const subscriptionPlans = subscriptionPlansData?.data || [];
+  console.log("subscriptionPlans", subscriptionPlans);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress
+          sx={{
+            color: "#3F80AE",
+            width: "50px !important",
+            height: "50px !important",
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh] rounded-lg flex gap-8 justify-center flex-wrap">
-      {subscriptionData.map((subscription) => (
+      {subscriptionPlans.map((subscription) => (
         <div
-          className="flex flex-col gap-8 sm:w-[45%] md:w-[30%] max-w-[345px]"
+          className="flex flex-col gap-5 sm:w-[45%] md:w-[30%] max-w-[345px]"
           key={subscription.id}
         >
           <div className="bg-[#3F80AE] rounded-lg py-3 px-5 text-white">
             <div className="flex items-center justify-between">
-              <p className="text-lg font-semibold">
-                Alpha Track {subscription.title}
-              </p>
+              <p className="text-lg font-semibold">{subscription.name}</p>
               <p className="text-lg font-semibold"> ${subscription.price}</p>
             </div>
             <p className="text-xs mt-2">Payment Package</p>
@@ -46,33 +44,18 @@ export default function Subscription() {
             }}
           >
             <CardContent>
-              <div className="flex flex-col gap-3 text-center text-white">
-                <p className="text-2xl">{subscription.title}</p>
+              <div className="flex flex-col gap-3 text-center text-white min-h-[400px]">
+                <p className="text-2xl">{subscription.name}</p>
                 <p className="text-3xl font-medium">${subscription.price}</p>
                 <p className="text-sm text-justify">
                   {subscription.description}
                 </p>
+                {subscription.features.map((feature, index) => (
+                  <div key={index} className="text-sm flex items-center gap-1">
+                    <GoDotFill /> <p>{feature}</p>
+                  </div>
+                ))}
               </div>
-
-              <Button
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 500,
-                  fontSize: "18px",
-                  width: "100%",
-                  marginTop: "20px",
-                  bgcolor: "white",
-                  color: "#3F80AE",
-                  "&:hover": {
-                    bgcolor: "#3F80AE",
-                    color: "white",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.40)",
-                  },
-                }}
-                onClick={() => selectedSubscription(subscription)}
-              >
-                Subscribe Now
-              </Button>
             </CardContent>
           </Card>
         </div>
