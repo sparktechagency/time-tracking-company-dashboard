@@ -8,9 +8,9 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ProjectPieChart from "../Chart/ProjectPieChart";
 import EmployeeAreaChart from "../Chart/EmployeeAreaChart";
 import {
-  useCompanyByMonthQuery,
   useDashboardOverviewQuery,
-  useEmployeeByMonthQuery,
+  useEmployeeByYearQuery,
+  useProjectByYearQuery,
 } from "../../Redux/api/dashboardApi";
 import CompanyBarChart from "../Chart/CompanyBarChart";
 
@@ -26,15 +26,15 @@ export default function Dashboard() {
   } = useDashboardOverviewQuery();
 
   const dashboardData = dashboardOverviewData?.data;
-  // console.log("dashboardData", dashboardData);
+  console.log("dashboardData", dashboardData);
 
   const { data: employeeByMonthData } =
-    useEmployeeByMonthQuery(totalEmployeeByYear);
+    useEmployeeByYearQuery(totalEmployeeByYear);
   const employeeMonthData = employeeByMonthData?.data;
-  // console.log("employeeMonthData", employeeMonthData);
+  console.log("employeeMonthData", employeeMonthData);
 
   const { data: companyByMonthData } =
-    useCompanyByMonthQuery(totalProjectByYear);
+    useProjectByYearQuery(totalProjectByYear);
   const companyMonthData = companyByMonthData?.data;
   console.log("companyMonthData", companyMonthData);
 
@@ -76,19 +76,19 @@ export default function Dashboard() {
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
             <div className="flex items-center gap-2 text-[#333333]">
               <LuFolderKanban />
-              <p className="font-medium text-lg">Total Company</p>
+              <p className="font-medium text-lg">Total Projects</p>
             </div>
             <p className="text-[#333333] text-3xl font-semibold">
-              {dashboardData?.totalCompany}
+              {dashboardData?.totalProjects}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg px-8 py-4 w-full  h-28">
             <div className="flex items-center gap-2 text-[#333333]">
               <LuFolderKanban />
-              <p className="font-medium text-lg">Total Revenue</p>
+              <p className="font-medium text-lg">Total Completed Projects</p>
             </div>
             <p className="text-[#333] text-3xl font-semibold">
-              {dashboardData?.totalRevenue}
+              {dashboardData?.totalCompletedProjects}
             </p>
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-3">
               <p className="text-[#333333] font-semibold text-xl capitalize">
-                total revenue
+                total employee
               </p>
             </div>
             <div className="w-28">
@@ -127,10 +127,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="mt-5">
-            <EmployeeAreaChart
-              selectedYear={totalEmployeeByYear}
-              employeeMonthData={employeeMonthData}
-            />
+            <EmployeeAreaChart employeeMonthData={employeeMonthData} />
           </div>
         </div>
         <div className="flex items-center gap-3 w-full">
@@ -141,7 +138,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between">
               <p className="text-[#333333] font-semibold text-xl">
-                Total Company
+                Total Project
               </p>
               <div className="w-28">
                 <FormControl fullWidth>

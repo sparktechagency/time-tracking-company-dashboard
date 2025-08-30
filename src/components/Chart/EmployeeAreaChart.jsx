@@ -9,15 +9,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function EmployeeAreaChart({ selectedYear, employeeMonthData }) {
-  const year = employeeMonthData?.year;
+export default function EmployeeAreaChart({ employeeMonthData }) {
+  console.log("Revenue chart data:", employeeMonthData);
 
-  const dataForChart = selectedYear === year ? employeeMonthData?.data : [];
+  // Get the data for the selected year from the revenueByYear object
+  const selectedYearData = employeeMonthData.data;
 
   return (
     <ResponsiveContainer width="100%" height={275}>
       <AreaChart
-        data={dataForChart}
+        data={selectedYearData}
         margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
       >
         <defs>
@@ -34,7 +35,7 @@ export default function EmployeeAreaChart({ selectedYear, employeeMonthData }) {
         />
         <Area
           type="monotone"
-          dataKey="revenue"
+          dataKey="count"
           stroke="#3F80AE"
           strokeWidth={2}
           fillOpacity={1}

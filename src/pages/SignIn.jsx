@@ -40,17 +40,18 @@ const SignIn = () => {
     // navigate("/", { replace: true });
     try {
       const res = await login(values).unwrap();
+      console.log(res);
       sessionStorage.setItem("accessToken", res?.data?.accessToken);
       sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
 
       if (res.success) {
-        toast.success("Login Successfully!");
+        toast.success("Login Successful!");
         navigate("/");
       } else {
         toast.error("Login Error.");
       }
     } catch (error) {
-      console.error("Error user login:", error);
+      console.log("Error user login:", error);
       if (error.data) {
         toast.error("Something went wrong while logging in.");
       }

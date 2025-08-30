@@ -6,7 +6,7 @@ const dashboardApi = baseApi.injectEndpoints({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
         return {
-          url: "/dashboard/general-stats",
+          url: "/dashboard/company-general-stats",
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -15,24 +15,25 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       providesTags: ["user"],
     }),
-    employeeByMonth: builder.query({
+    employeeByYear: builder.query({
       query: (year) => {
         const accessToken = sessionStorage.getItem("accessToken");
         return {
-          url: `/dashboard/monthly-revenue-stripe?year=${year}`,
+          url: `/dashboard/total-employees-yearly?year=${year}`,
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
         };
       },
       providesTags: ["user"],
     }),
-    companyByMonth: builder.query({
-      query: () => {
+    projectByYear: builder.query({
+      query: (year) => {
         const accessToken = sessionStorage.getItem("accessToken");
         return {
-          url: `/dashboard/total-company-monthly`,
+          url: `/dashboard/total-employees-yearly?year=${year}`,
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -59,7 +60,7 @@ const dashboardApi = baseApi.injectEndpoints({
 
 export const {
   useDashboardOverviewQuery,
-  useEmployeeByMonthQuery,
-  useCompanyByMonthQuery,
+  useEmployeeByYearQuery,
+  useProjectByYearQuery,
   useGetSubscriptionPlansQuery,
 } = dashboardApi;
