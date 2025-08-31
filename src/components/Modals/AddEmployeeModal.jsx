@@ -79,20 +79,22 @@ export default function AddEmlpoyeeModal({
     try {
       const response = await createEmployee(formData).unwrap();
       console.log("Employee created successfully:", response);
-      toast.success("Employee Created Successfully..!");
+      if (response.success) {
+        toast.success("Employee Created Successfully..!");
 
-      // Reset form
-      setEmployeeName("");
-      setEmployeeEmail("");
-      setEmployeeAddress("");
-      setEmployeePhone("");
-      setEmployeeDesignation("");
-      setEmployeePassword("");
-      setEmployeeImage(undefined);
-      setImagePreview(null);
-      setFormErrors({});
+        // Reset form
+        setEmployeeName("");
+        setEmployeeEmail("");
+        setEmployeeAddress("");
+        setEmployeePhone("");
+        setEmployeeDesignation("");
+        setEmployeePassword("");
+        setEmployeeImage(undefined);
+        setImagePreview(null);
+        setFormErrors({});
 
-      handleCloseAddEmployeeModal();
+        handleCloseAddEmployeeModal();
+      }
     } catch (error) {
       console.error("Error creating employee:", error);
       toast.error("Failed to create employee");
