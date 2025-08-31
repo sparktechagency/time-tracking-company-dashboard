@@ -7,6 +7,7 @@ import EmployeeLineChart from "../Chart/EmployeeLineChart";
 import { IoIosTrendingDown } from "react-icons/io";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useState } from "react";
+import { getImageUrl } from "../../utils/baseUrl";
 
 export default function EmployeeDetailsModal({
   openDetailsModal,
@@ -15,6 +16,8 @@ export default function EmployeeDetailsModal({
 }) {
   const [activeButton, setActiveButton] = useState("list");
   const [showCalendar, setShowCalendar] = useState(false);
+
+  const imageUrl = getImageUrl()
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
@@ -56,7 +59,7 @@ export default function EmployeeDetailsModal({
                 <p className="font-medium mb-1">View Details</p>
                 <div className="flex gap-10">
                   <img
-                    src={selectedEmployee.image}
+                    src={`${imageUrl}/${selectedEmployee?.profile}`}
                     alt={selectedEmployee.name}
                     style={{
                       width: "120px",

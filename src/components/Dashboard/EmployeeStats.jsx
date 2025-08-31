@@ -13,7 +13,7 @@ import EmployeeDetailsModal from "../Modals/EmployeeDetailsModal";
 import BlockConfirmationModal from "../Modals/BlockConfirmationModal";
 import DeleteConfirmationModal from "../Modals/DeleteConfirmationModal";
 import EmployeeTable from "../UI/EmployeeTable";
-import { useAllEmployeeQuery } from "../../Redux/api/usersApi";
+import { useAllEmployeeQuery } from "../../Redux/api/employeeApi";
 import AddEmployeeModal from "../Modals/AddEmployeeModal";
 
 export default function EmployeeStats() {
@@ -155,8 +155,8 @@ export default function EmployeeStats() {
               sx={{ height: "50px" }}
             >
               <MenuItem value="all">All</MenuItem>
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Blocked">Blocked</MenuItem>
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="blocked">Blocked</MenuItem>
             </Select>
           </FormControl>
         </div>
