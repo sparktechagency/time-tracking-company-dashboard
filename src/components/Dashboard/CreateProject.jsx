@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   TextField,
   Button,
@@ -13,33 +13,38 @@ import {
   ListItemText,
 } from "@mui/material";
 import { LuImageUp } from "react-icons/lu";
-import { AiOutlineAudioMuted } from "react-icons/ai";
+import { AiFillAudio } from "react-icons/ai";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-
-const employees = [
-  "John Doe",
-  "Jane Smith",
-  "Alice Johnson",
-  "Bob Brown",
-  "Charlie Davis",
-  "David Lee",
-];
+import { useAllEmployeeQuery } from "../../Redux/api/employeeApi";
+import { useCreateProjectMutation } from "../../Redux/api/projectApi";
+import { toast } from "sonner";
 
 const CreateProject = () => {
+  const { data: allEmployeeData, isLoading } = useAllEmployeeQuery();
+  const allEmployee = allEmployeeData?.data?.data || [];
+  const employees = allEmployee.map((employee) => employee.name);
+  // console.log("employees", employees);
+
   const [projectName, setProjectName] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [projectTime, setProjectTime] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeInput, setEmployeeInput] = useState("");
   const [image, setImage] = useState(null);
-  const [audio, setAudio] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
+  const [audioPreview, setAudioPreview] = useState(null);
   const [error, setError] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredEmployees, setFilteredEmployees] = useState(employees);
+
+  const [createProject] = useCreateProjectMutation();
 
   const handleAddEmployee = () => {
     if (employeeInput && !assignedEmployees.includes(employeeInput)) {
@@ -55,27 +60,82 @@ const CreateProject = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
   const handleAudioUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (file.type.startsWith("audio/")) {
-        setAudio(URL.createObjectURL(file));
+        setAudioFile(file);
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          setAudioPreview(reader.result);
+        };
+
+        reader.readAsDataURL(file);
         setError("");
       } else {
         setError("Please upload a valid audio file.");
-        setAudio(null);
+        setAudioFile(null);
       }
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Project Name:", projectName);
-    console.log("Project Time:", projectTime);
-    console.log("Project Description:", projectDescription);
-    console.log("Assigned Employees:", assignedEmployees);
+  const handleSubmit = async () => {
+    if (
+      !projectName ||
+      !projectTime ||
+      !projectDescription ||
+      !startDate ||
+      !endDate
+    ) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
+    const formData = new FormData();
+    const projectData = {
+      title: projectName,
+      projectTime: Number(projectTime),
+      description: projectDescription,
+      employees: assignedEmployees,
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+    };
+    console.log("project data", projectData);
+
+    formData.append("data", JSON.stringify(projectData));
+    if (image) formData.append("images", image);
+    if (audioFile) formData.append("audio", audioFile);
+
+    try {
+      const response = await createProject(formData).unwrap();
+      console.log("api response", response);
+      if (response.success) {
+        toast.success("Project created successfully!");
+
+        setProjectName("");
+        setStartDate(null);
+        setEndDate(null);
+        setProjectTime("");
+        setProjectDescription("");
+        setImage(null);
+        setImagePreview(null);
+        setAudioFile(null);
+        setAudioPreview(null);
+        setError("");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to create project. Please try again.");
+    }
   };
 
   const handleSearch = (e) => {
@@ -112,13 +172,23 @@ const CreateProject = () => {
           <div className="w-full flex flex-col gap-2">
             <p className="font-medium">Start Date</p>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Select Start Date" />
+              <DatePicker
+                label="Select Start Date"
+                value={startDate}
+                onChange={(newValue) => setStartDate(newValue)}
+                renderInput={(params) => <TextField {...params} />}
+              />
             </LocalizationProvider>
           </div>
           <div className="w-full flex flex-col gap-2">
             <p className="font-medium">End Date</p>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Select End Date" />
+              <DatePicker
+                label="Select End Date"
+                value={endDate}
+                onChange={(newValue) => setEndDate(newValue)}
+                renderInput={(params) => <TextField {...params} />}
+              />
             </LocalizationProvider>
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -168,16 +238,16 @@ const CreateProject = () => {
               }}
             >
               <div className="text-[#3F80AE]">
-                <AiOutlineAudioMuted className="text-xl" />
+                <AiFillAudio className="text-xl" />
               </div>
 
               <input type="file" hidden onChange={handleAudioUpload} />
             </Button>
           </div>
-          {image && (
+          {imagePreview && (
             <div className="w-1/2">
               <img
-                src={image}
+                src={imagePreview}
                 alt="Uploaded"
                 style={{
                   marginTop: "10px",
@@ -194,10 +264,10 @@ const CreateProject = () => {
           {error && <Typography color="error">{error}</Typography>}
 
           {/* Display uploaded audio */}
-          {audio && (
+          {audioPreview && (
             <div className="mt-3">
               <audio controls>
-                <source src={audio} type="audio/mp3" />
+                <source src={audioPreview} type="audio/mp3" />
               </audio>
             </div>
           )}
