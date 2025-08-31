@@ -18,7 +18,10 @@ import { AiFillAudio } from "react-icons/ai";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useAllEmployeeQuery } from "../../Redux/api/employeeApi";
-import { useCreateProjectMutation } from "../../Redux/api/projectApi";
+import {
+  useAssignEmployeeMutation,
+  useCreateProjectMutation,
+} from "../../Redux/api/projectApi";
 import { toast } from "sonner";
 
 const CreateProject = () => {
@@ -45,6 +48,7 @@ const CreateProject = () => {
   const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   const [createProject] = useCreateProjectMutation();
+  const [assignEmployee] = useAssignEmployeeMutation();
 
   const handleAddEmployee = () => {
     if (employeeInput && !assignedEmployees.includes(employeeInput)) {
