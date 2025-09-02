@@ -70,8 +70,7 @@ export default function Profile() {
         toast.success("Profile Updated successfully!");
         setName("");
         setPhone("");
-        setImagePreview(null); // Clear preview
-        refetch(); // Refetch profile data to reflect changes
+        refetch();
       }
     } catch (err) {
       console.log(err);

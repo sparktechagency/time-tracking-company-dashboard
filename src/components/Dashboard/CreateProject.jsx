@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
 } from "@mui/material";
 import { LuImageUp } from "react-icons/lu";
 import { AiFillAudio } from "react-icons/ai";
@@ -18,16 +19,17 @@ import { AiFillAudio } from "react-icons/ai";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useAllEmployeeQuery } from "../../Redux/api/employeeApi";
-import {
-  useAssignEmployeeMutation,
-  useCreateProjectMutation,
-} from "../../Redux/api/projectApi";
+import { useCreateProjectMutation } from "../../Redux/api/projectApi";
 import { toast } from "sonner";
 
 const CreateProject = () => {
   const { data: allEmployeeData, isLoading } = useAllEmployeeQuery();
   const allEmployee = allEmployeeData?.data?.data || [];
-  const employees = allEmployee.map((employee) => employee.name);
+  const employees = allEmployee.map((employee) => ({
+    name: employee.name,
+    id: employee._id,
+  }));
+
   console.log("employees", employees);
 
   const [projectName, setProjectName] = useState("");
@@ -37,6 +39,7 @@ const CreateProject = () => {
   const [projectDescription, setProjectDescription] = useState("");
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeInput, setEmployeeInput] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
@@ -48,17 +51,25 @@ const CreateProject = () => {
   const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   const [createProject] = useCreateProjectMutation();
-  const [assignEmployee] = useAssignEmployeeMutation();
 
   const handleAddEmployee = () => {
-    if (employeeInput && !assignedEmployees.includes(employeeInput)) {
-      setAssignedEmployees([...assignedEmployees, employeeInput]);
+    if (selectedEmployeeId && !assignedEmployees.includes(selectedEmployeeId)) {
+      setAssignedEmployees([...assignedEmployees, selectedEmployeeId]);
       setEmployeeInput("");
+      setSelectedEmployeeId(null);
     }
   };
 
+  console.log("assignedEmployees", assignedEmployees);
+
   const handleRemoveEmployee = (employee) => {
     setAssignedEmployees(assignedEmployees.filter((emp) => emp !== employee));
+  };
+
+  const handleSelectEmployee = (employee) => {
+    setEmployeeInput(employee.name); // Display name in input field
+    setSelectedEmployeeId(employee.id); // Store id to send to the API
+    setOpenModal(false); // Close modal after selection
   };
 
   const handleImageUpload = (e) => {
@@ -114,6 +125,7 @@ const CreateProject = () => {
       endDate: endDate?.toISOString(),
     };
     console.log("project data", projectData);
+    console.log("image", image);
 
     formData.append("data", JSON.stringify(projectData));
     if (image) formData.append("images", image);
@@ -152,14 +164,17 @@ const CreateProject = () => {
     );
   };
 
-  const handleSelectEmployee = (employee) => {
-    setEmployeeInput(employee);
-    setOpenModal(false);
-  };
-
   // useEffect(() => {
   //   setFilteredEmployees(employees);
   // }, [employees]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
@@ -300,17 +315,20 @@ const CreateProject = () => {
               Assigned To
             </p>
             <div className="flex gap-2">
-              {assignedEmployees.map((employee, index) => (
-                <Chip
-                  key={index}
-                  label={employee}
-                  onDelete={() => handleRemoveEmployee(employee)}
-                  deleteIcon={<span style={{ color: "#CC0505" }}>×</span>}
-                  sx={{
-                    paddingX: "5px",
-                  }}
-                />
-              ))}
+              {assignedEmployees.map((id) => {
+                const employee = employees.find((emp) => emp.id === id);
+                return (
+                  <Chip
+                    key={id}
+                    label={employee.name}
+                    onDelete={() => handleRemoveEmployee(employee)}
+                    deleteIcon={<span style={{ color: "#CC0505" }}>×</span>}
+                    sx={{
+                      paddingX: "5px",
+                    }}
+                  />
+                );
+              })}
             </div>
             <div className="flex">
               <TextField
@@ -386,7 +404,7 @@ const CreateProject = () => {
                   onClick={() => handleSelectEmployee(employee)}
                 >
                   <ListItemText
-                    primary={employee}
+                    primary={employee.name}
                     sx={{
                       bgcolor: "#ECF2F7",
                       padding: "10px",
@@ -406,7 +424,7 @@ const CreateProject = () => {
                   onClick={() => handleSelectEmployee(employee)}
                 >
                   <ListItemText
-                    primary={employee}
+                    primary={employee.name}
                     sx={{
                       bgcolor: "#ECF2F7",
                       padding: "10px",

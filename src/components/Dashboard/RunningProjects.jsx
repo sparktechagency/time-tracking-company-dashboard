@@ -21,13 +21,19 @@ import {
 import { GoEye } from "react-icons/go";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { PiNotepadBold } from "react-icons/pi";
-import { useAllProjectsQuery } from "../../Redux/api/projectApi";
+import {
+  useAllProjectsQuery,
+  useDeleteProjectMutation,
+} from "../../Redux/api/projectApi";
 import { getImageUrl } from "../../utils/baseUrl";
+import { toast } from "sonner";
 
 export default function RunningProjects() {
-  const { data: allProjectsData, isLoading } = useAllProjectsQuery();
+  const { data: allProjectsData, isLoading, refetch } = useAllProjectsQuery();
   const allProjects = allProjectsData?.data?.data || [];
   console.log("allProjectsData", allProjects);
+
+  const [deleteProject] = useDeleteProjectMutation();
 
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [page, setPage] = useState(0);
@@ -86,9 +92,24 @@ export default function RunningProjects() {
 
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
 
-  const handleDeleteProject = () => {
-    console.log("Project deleted: ", selectedProject);
-    setOpenDeleteModal(false);
+  const handleDeleteProject = async () => {
+    if (!selectedProject) return;
+
+    try {
+      // Call the delete API with the project ID
+      const response = await deleteProject(selectedProject._id).unwrap();
+      console.log(response);
+
+      if (response.success) {
+        toast.success("Project Deleted Successfully");
+        refetch();
+        setOpenDeleteModal(false);
+        setSelectedProject(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      // Optional: show some error toast or alert
+    }
   };
 
   if (isLoading) {
@@ -157,7 +178,14 @@ export default function RunningProjects() {
                       {project.title}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
-                      {project.assignedEmployee ?? "N/A"}
+                      {/* {project.assignedEmployee ?? "N/A"} */}
+                      {project.employees.map((employee) => {
+                        return (
+                          <ul key={employee._id}>
+                            <li>{employee.name}</li>
+                          </ul>
+                        );
+                      })}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
                       {project.company.name}
@@ -168,6 +196,7 @@ export default function RunningProjects() {
                           padding: "10px 15px",
                           borderRadius: "8px",
                           color: "white",
+                          textTransform: "capitalize",
                           backgroundColor:
                             project.status.toLowerCase() === "completed"
                               ? "#008000"
@@ -267,11 +296,31 @@ export default function RunningProjects() {
       <Modal open={openDetailsModal} onClose={handleCloseDetailsModal}>
         <div className="w-[900px] bg-white p-10 m-auto mt-20 rounded-lg">
           <div>
-            <h3 className="font-medium mb-5">View Details</h3>
+            <div className="flex items-center justify-between">
+              <p className="font-medium mb-5">View Details</p>
+              <Button
+                sx={{
+                  color: "#fff",
+                  textTransform: "none",
+                  bgcolor: "#3F80AE",
+                  width: "100px",
+                  height: "40px",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    color: "#3F80AE",
+                    bgcolor: "white",
+                    fontWeight: "600",
+                    border: "2px solid #3F80AE",
+                  },
+                }}
+              >
+                Edit Now
+              </Button>
+            </div>
             <img
               src={`${imageUrl}/${selectedProject?.images[0]}`}
               alt={selectedProject?.title}
-              className="h-40 w-72"
+              className="w-2/3 rounded-lg"
             />
             <div className="flex flex-col gap-2 mt-5">
               <p className="text-[#333333] font-semibold text-lg">
@@ -282,7 +331,9 @@ export default function RunningProjects() {
               </p> */}
               <div>
                 <p className="font-medium">Description:</p>
-                <p className="text-sm">{selectedProject?.description}</p>
+                <p className="text-sm text-[#545454]">
+                  {selectedProject?.description}
+                </p>
               </div>
               {/* <div>
                 <p className="font-medium mb-2">Key Features</p>
