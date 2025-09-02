@@ -96,6 +96,10 @@ export default function EmployeeTable({
                           width: "30px",
                           height: "30px",
                           borderRadius: "4px",
+                          "&:hover": {
+                            color: "#658065",
+                            border: "1px solid #658065",
+                          },
                         }}
                       >
                         <GoEye />
@@ -110,6 +114,10 @@ export default function EmployeeTable({
                           width: "30px",
                           height: "30px",
                           borderRadius: "4px",
+                          "&:hover": {
+                            color: "#3F80AE",
+                            border: "1px solid #3F80AE",
+                          },
                         }}
                       >
                         <SlLock />
@@ -124,6 +132,10 @@ export default function EmployeeTable({
                           width: "30px",
                           height: "30px",
                           borderRadius: "4px",
+                          "&:hover": {
+                            color: "#CC0505",
+                            border: "1px solid #CC0505",
+                          },
                         }}
                       >
                         <AiTwotoneDelete />

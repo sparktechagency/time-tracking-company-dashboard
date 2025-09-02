@@ -13,7 +13,6 @@ import ChangePassword from "../Dashboard/ChangePassword";
 import AddBreakTime from "../Dashboard/AddBreakTime";
 import Notifications from "../Dashboard/Notifications";
 import Profile from "../Dashboard/Profile";
-import PrivacyPolicy from "../Dashboard/PrivacyPolicy";
 import Subscription from "../Dashboard/Subscription";
 import EmployeeLeaveList from "../Dashboard/EmployeeLeaveList";
 import ProtectedRoute from "../../utils/ProtectedRoute";
@@ -70,10 +69,6 @@ const router = createBrowserRouter([
           {
             path: "change-password",
             element: <ChangePassword />,
-          },
-          {
-            path: "privacy-policy",
-            element: <PrivacyPolicy />,
           },
           {
             path: "add-break-time",
