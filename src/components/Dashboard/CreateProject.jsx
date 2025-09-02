@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -18,14 +18,17 @@ import { AiFillAudio } from "react-icons/ai";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useAllEmployeeQuery } from "../../Redux/api/employeeApi";
-import { useCreateProjectMutation } from "../../Redux/api/projectApi";
+import {
+  useAssignEmployeeMutation,
+  useCreateProjectMutation,
+} from "../../Redux/api/projectApi";
 import { toast } from "sonner";
 
 const CreateProject = () => {
   const { data: allEmployeeData, isLoading } = useAllEmployeeQuery();
   const allEmployee = allEmployeeData?.data?.data || [];
   const employees = allEmployee.map((employee) => employee.name);
-  // console.log("employees", employees);
+  console.log("employees", employees);
 
   const [projectName, setProjectName] = useState("");
   const [startDate, setStartDate] = useState(null);
@@ -45,6 +48,7 @@ const CreateProject = () => {
   const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   const [createProject] = useCreateProjectMutation();
+  const [assignEmployee] = useAssignEmployeeMutation();
 
   const handleAddEmployee = () => {
     if (employeeInput && !assignedEmployees.includes(employeeInput)) {
@@ -152,6 +156,10 @@ const CreateProject = () => {
     setEmployeeInput(employee);
     setOpenModal(false);
   };
+
+  // useEffect(() => {
+  //   setFilteredEmployees(employees);
+  // }, [employees]);
 
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
@@ -369,28 +377,47 @@ const CreateProject = () => {
             onChange={handleSearch}
             sx={{ marginBottom: "10px", bgcolor: "#ECF2F7" }}
           />
-          <List>
-            {filteredEmployees.map((employee, index) => (
-              <ListItem
-                button
-                key={index}
-                onClick={() => handleSelectEmployee(employee)}
-              >
-                <ListItemText
-                  primary={employee}
-                  sx={{
-                    bgcolor: "#ECF2F7",
-                    padding: "10px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                />
-              </ListItem>
-            ))}
-          </List>
-          {/* <Button onClick={() => setOpenModal(false)} color="primary">
-            Cancel
-          </Button> */}
+          {filteredEmployees && filteredEmployees.length > 0 ? (
+            <List>
+              {filteredEmployees.map((employee, index) => (
+                <ListItem
+                  button
+                  key={index}
+                  onClick={() => handleSelectEmployee(employee)}
+                >
+                  <ListItemText
+                    primary={employee}
+                    sx={{
+                      bgcolor: "#ECF2F7",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <List>
+              {employees.map((employee, index) => (
+                <ListItem
+                  button
+                  key={index}
+                  onClick={() => handleSelectEmployee(employee)}
+                >
+                  <ListItemText
+                    primary={employee}
+                    sx={{
+                      bgcolor: "#ECF2F7",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
         </Box>
       </Modal>
     </div>

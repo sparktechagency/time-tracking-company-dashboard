@@ -67,11 +67,6 @@ export default function Sidebar() {
             label: "Change Password",
           },
           {
-            to: "/privacy-policy",
-            icon: <LuShieldCheck fontSize={24} />,
-            label: "Privacy Policy",
-          },
-          {
             to: "/add-break-time",
             icon: <LuCookingPot fontSize={24} />,
             label: "Add Break Time",
@@ -92,7 +87,7 @@ export default function Sidebar() {
             to={to}
             onClick={() => handleSelect(to)}
             className={({ isActive }) =>
-              `flex items-center font-medium gap-3 text-base py-2 px-2 rounded-md 
+              `flex items-center justify-center lg:justify-start font-medium gap-3 text-base py-2 px-2 rounded-md 
               ${
                 isActive
                   ? "bg-[#3F80AE] text-[#fff]"
@@ -104,7 +99,7 @@ export default function Sidebar() {
             }
           >
             {icon}
-            <p>{label}</p>
+            <p className="hidden lg:block">{label}</p>
           </NavLink>
         ))}
         <Button
@@ -114,7 +109,10 @@ export default function Sidebar() {
             padding: "8px",
             width: "100%",
             display: "flex",
-            justifyContent: "flex-start",
+            justifyContent: {
+              xs: "center",
+              lg: "flex-start",
+            },
             marginLeft: "4px",
             gap: "12px",
             ":hover": { backgroundColor: "#70a4c7", color: "#fff" },
@@ -124,7 +122,7 @@ export default function Sidebar() {
           }}
         >
           <MdLogout className="text-2xl" />
-          <p className="font-semibold">Log Out</p>
+          <p className="font-semibold hidden lg:block">Log Out</p>
         </Button>
       </div>
     </div>

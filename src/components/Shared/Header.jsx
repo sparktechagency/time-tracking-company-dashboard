@@ -1,15 +1,32 @@
 import { PiBellSimpleRingingBold } from "react-icons/pi";
 
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
-import profileImg from "../../../public/Images/profile.png";
+import { Button, CircularProgress } from "@mui/material";
+import { useUserProfileQuery } from "../../Redux/api/userApi";
+import { getImageUrl } from "../../utils/baseUrl";
 
 export default function Header() {
+  const { data: profileApiData, isLoading, isError } = useUserProfileQuery();
+  const profileData = profileApiData?.data;
+  console.log("Profile Data", profileData);
+
   const navigate = useNavigate();
+  const imageUrl = getImageUrl();
 
   const handleProfileClick = () => {
     navigate("/profile");
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+  if (isError) {
+    return <div>Error loading data.</div>;
+  }
 
   return (
     <div className="flex items-center justify-end bg-[#fff] w-full px-10 py-4">
@@ -32,13 +49,15 @@ export default function Header() {
         >
           <div className="flex items-center gap-2">
             <img
-              src={profileImg}
+              src={`${imageUrl}/${profileData.profile}`}
               alt=""
-              className="size-8 rounded-full border border-white"
+              className="size-10 rounded-full border border-white"
             />
             <div className="flex flex-col items-start">
-              <p className="text-black font-medium">User Name</p>
-              <p className="text-black font-medium text-xs">Admin</p>
+              <p className="text-black font-medium">{profileData.name}</p>
+              <p className="text-black font-medium text-xs">
+                {profileData.role}
+              </p>
             </div>
           </div>
         </Button>

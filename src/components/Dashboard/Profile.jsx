@@ -1,41 +1,82 @@
-import { useState } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-} from "@mui/material";
+import { useEffect, useState } from "react";
+import { Button, IconButton, TextField } from "@mui/material";
 import { FiEdit } from "react-icons/fi";
-import { RiLockPasswordFill } from "react-icons/ri";
-import profileImg from "../../../public/Images/profile.png";
+import profile from "../../../public/Images/profile.png";
+import {
+  useEditProfileMutation,
+  useUserProfileQuery,
+} from "../../Redux/api/userApi";
+import { getImageUrl } from "../../utils/baseUrl";
+import { toast } from "sonner";
 
 export default function Profile() {
-  const [name, setName] = useState("Charlene Reed");
-  const [email, setEmail] = useState("charlenereed@gmail.com");
-  const [dob, setDob] = useState("25 January 1990");
-  const [userName, setUserName] = useState("Charlene Reed");
+  const { data: profileApiData, refetch } = useUserProfileQuery();
+  const profileData = profileApiData?.data;
+  console.log("Profile Data", profileData);
 
-  const [profileImage, setProfileImage] = useState(profileImg);
+  const [updateProfile] = useEditProfileMutation();
 
-  const handleFileChange = (e) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [profileImage, setProfileImage] = useState(profile);
+
+  const imageUrl = getImageUrl();
+
+  useEffect(() => {
+    if (profileData) {
+      setName(profileData.name);
+      setEmail(profileData.email);
+      setPhone(profileData.phone);
+      if (profileData.profile) {
+        setProfileImage(profileData.profile);
+      }
+    }
+  }, [profileData]);
+
+  const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Set the file for later submission
+      setProfileImage(file);
+
+      // Preview the selected image using FileReader (base64)
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
+        setProfileImage(reader.result); // Set the base64 image preview
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Convert the file to base64
     }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      name,
-      email,
-      dob,
-      userName,
-    });
+  const handleSubmit = async () => {
+    const updateProfileData = {
+      name: name,
+      phone: phone,
+    };
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(updateProfileData));
+
+    // if (profileImage && profileImage instanceof File) {
+    //   formData.append("profileImage", profileImage);
+    // }
+
+    try {
+      const response = await updateProfile(formData).unwrap();
+      console.log("API response", response);
+
+      if (response.success) {
+        toast.success("Profile Updated successfully!");
+        setName("");
+        setPhone("");
+        setImagePreview(null); // Clear preview
+        refetch(); // Refetch profile data to reflect changes
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update profile. Please try again.");
+    }
   };
 
   return (
@@ -43,7 +84,11 @@ export default function Profile() {
       {/* Profile Header */}
       <div className="relative">
         <div className="bg-[#efefef]">
-          <img src={profileImage} alt="" className="size-32" />
+          <img
+            src={`${imageUrl}/${profileImage}`}
+            alt="Profile Image"
+            className="rounded-full w-32 h-32 object-cover"
+          />
         </div>
         <IconButton
           sx={{
@@ -59,7 +104,7 @@ export default function Profile() {
           <input
             type="file"
             accept="image/*"
-            onChange={handleFileChange}
+            onChange={handleImageUpload}
             style={{ display: "none" }}
           />
           <FiEdit fontSize={20} className="text-[#3F80AE]" />
@@ -76,14 +121,6 @@ export default function Profile() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div className="w-full">
-            <TextField
-              label="User Name"
-              fullWidth
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-            />
-          </div>
         </div>
 
         <div className="flex items-center gap-5">
@@ -92,68 +129,21 @@ export default function Profile() {
               label="Email"
               fullWidth
               value={email}
+              disabled // Email is displayed but not editable
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>{" "}
           <div className="w-full">
             <TextField
-              label="Date of Birth"
+              label="Phone Number"
               fullWidth
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="flex items-center gap-5">
-          {/* <div className="w-full">
-            <TextField
-              label="Present Address"
-              fullWidth
-              value={presentAddress}
-              onChange={(e) => setPresentAddress(e.target.value)}
-            />
-          </div> */}
-        </div>
-
-        {/* <div className="flex items-center gap-5">
-          <div className="w-full">
-            <TextField
-              label="Permanent Address"
-              fullWidth
-              value={permanentAddress}
-              onChange={(e) => setPermanentAddress(e.target.value)}
-            />
-          </div>
-          <div className="w-full">
-            <TextField
-              label="City"
-              fullWidth
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-          </div>
-        </div> */}
-
-        {/* <div className="flex items-center gap-5">
-          <div className="w-full">
-            <TextField
-              label="Postal Code"
-              fullWidth
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-            />
-          </div>
-          <div className="w-full">
-            <TextField
-              label="Country"
-              fullWidth
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-          </div>
-        </div> */}
-
+        {/* Save & Update Button */}
         <div>
           <Button
             fullWidth

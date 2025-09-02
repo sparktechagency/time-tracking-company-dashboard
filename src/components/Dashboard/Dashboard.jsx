@@ -3,7 +3,13 @@ import { LuCalendar } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 import { LuFolderKanban } from "react-icons/lu";
 
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 
 import ProjectPieChart from "../Chart/ProjectPieChart";
 import EmployeeAreaChart from "../Chart/EmployeeAreaChart";
@@ -53,9 +59,12 @@ export default function Dashboard() {
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
   }
-
   if (isError) {
     return <div>Error loading data.</div>;
   }
