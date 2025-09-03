@@ -27,6 +27,7 @@ import {
 } from "../../Redux/api/projectApi";
 import { getImageUrl } from "../../utils/baseUrl";
 import { toast } from "sonner";
+import AssignEmployeeModal from "../Modals/AssignEmployeeModal";
 
 export default function RunningProjects() {
   const { data: allProjectsData, isLoading, refetch } = useAllProjectsQuery();
@@ -37,11 +38,12 @@ export default function RunningProjects() {
 
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(4);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   const imageUrl = getImageUrl();
 
@@ -91,6 +93,12 @@ export default function RunningProjects() {
   };
 
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+
+  const handleEditNow = () => {
+    if (!selectedProject) return;
+    setOpenDetailsModal(false);
+    setOpenEditModal(true);
+  };
 
   const handleDeleteProject = async () => {
     if (!selectedProject) return;
@@ -281,7 +289,6 @@ export default function RunningProjects() {
           </TableBody>
         </Table>
       </TableContainer>
-
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
@@ -291,7 +298,6 @@ export default function RunningProjects() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
       {/* View Details Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseDetailsModal}>
         <div className="w-[900px] bg-white p-10 m-auto mt-20 rounded-lg">
@@ -299,11 +305,12 @@ export default function RunningProjects() {
             <div className="flex items-center justify-between">
               <p className="font-medium mb-5">View Details</p>
               <Button
+                onClick={handleEditNow}
                 sx={{
                   color: "#fff",
                   textTransform: "none",
                   bgcolor: "#3F80AE",
-                  width: "100px",
+                  width: "150px",
                   height: "40px",
                   borderRadius: "4px",
                   "&:hover": {
@@ -314,7 +321,7 @@ export default function RunningProjects() {
                   },
                 }}
               >
-                Edit Now
+                Assign Employee
               </Button>
             </div>
             <img
@@ -441,7 +448,14 @@ export default function RunningProjects() {
             </Button>
           </div>
         </div>
-      </Modal>
+      </Modal>{" "}
+      <AssignEmployeeModal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        project={selectedProject}
+        imageBaseUrl={imageUrl}
+        onUpdated={refetch}
+      />
     </div>
   );
 }

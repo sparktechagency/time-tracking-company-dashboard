@@ -55,7 +55,7 @@ export default function Header() {
             />
             <div className="flex flex-col items-start">
               <p className="text-black font-medium">{profileData.name}</p>
-              <p className="text-black font-medium text-xs">
+              <p className="text-black font-medium text-xs capitalize">
                 {profileData.role}
               </p>
             </div>

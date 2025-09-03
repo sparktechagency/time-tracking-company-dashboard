@@ -177,11 +177,11 @@ const CreateProject = () => {
   }
 
   return (
-    <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
+    <div className="px-10 py-8 bg-[#efefef]">
       <p className="text-xl font-medium mb-5">Create New Projects Template</p>
 
       <div className="bg-white px-6 py-10 rounded-lg">
-        <div className="flex items-center gap-5 mb-5">
+        <div className="flex flex-col xl:flex-row items-center gap-5 mb-5">
           <div className="w-full flex flex-col gap-2">
             <p className="font-medium">Projects Name</p>
             <TextField
@@ -192,7 +192,7 @@ const CreateProject = () => {
               onChange={(e) => setProjectName(e.target.value)}
             />
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-44 flex flex-col gap-2">
             <p className="font-medium">Start Date</p>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
@@ -203,7 +203,7 @@ const CreateProject = () => {
               />
             </LocalizationProvider>
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-44 flex flex-col gap-2">
             <p className="font-medium">End Date</p>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
@@ -214,17 +214,16 @@ const CreateProject = () => {
               />
             </LocalizationProvider>
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-2/3 flex flex-col gap-2">
             <p className="font-medium">Project Time</p>
             <TextField
               label="Enter Project Time"
               variant="outlined"
               value={projectTime}
               onChange={(e) => setProjectTime(e.target.value)}
-              fullWidth
             />
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <p className="font-medium">Upload Photo</p>
             <Button
               variant="outlined"
@@ -232,6 +231,7 @@ const CreateProject = () => {
               fullWidth
               sx={{
                 height: "55px",
+                width: "200px",
                 textTransform: "none",
                 outline: "none",
                 border: "1px solid #ccc",
@@ -246,7 +246,7 @@ const CreateProject = () => {
               <input type="file" hidden onChange={handleImageUpload} />
             </Button>
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <p className="font-medium">Upload Audio</p>
             <Button
               variant="outlined"
@@ -254,6 +254,7 @@ const CreateProject = () => {
               fullWidth
               sx={{
                 height: "55px",
+                width: "200px",
                 textTransform: "none",
                 outline: "none",
                 border: "1px solid #ccc",
@@ -369,7 +370,7 @@ const CreateProject = () => {
           bgcolor: "#3F80AE",
         }}
       >
-        Send Now
+        Create Project
       </Button>
 
       {/* Modal for Employee Selection */}
