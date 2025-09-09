@@ -38,12 +38,30 @@ const projectApi = baseApi.injectEndpoints({
         const accessToken = sessionStorage.getItem("accessToken");
         console.log("Dashboard API Token:", accessToken);
 
-        console.log("create project api data", data);
+        console.log("edit project api id", id);
+        console.log("edit project api data", data);
 
         return {
           url: `/project/${id}`,
           method: "patch",
           body: data,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["project"],
+    }),
+    deleteProject: builder.mutation({
+      query: (id) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("Dashboard API Token:", accessToken);
+
+        console.log("delete project api data", id);
+
+        return {
+          url: `/project/${id}`,
+          method: "delete",
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -58,4 +76,5 @@ export const {
   useAllProjectsQuery,
   useCreateProjectMutation,
   useAssignEmployeeMutation,
+  useDeleteProjectMutation,
 } = projectApi;

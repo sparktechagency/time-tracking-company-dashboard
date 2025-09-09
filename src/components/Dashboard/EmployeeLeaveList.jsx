@@ -12,11 +12,14 @@ import {
   Modal,
   Box,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { GoEye } from "react-icons/go";
 import { IoMdAdd } from "react-icons/io";
+import AddOrEditLeaveModal from "../Modals/AddOrEditLeaveModal";
+import { useGetLeaveRequestsQuery } from "../../Redux/api/leaveApi";
 
 const employeeLeaveData = [
   {
@@ -162,15 +165,32 @@ const employeeLeaveData = [
 ];
 
 export default function EmployeeLeaveList() {
+  const {
+    data: allLeaveRequestData,
+    isLoading,
+    refetch,
+  } = useGetLeaveRequestsQuery();
+  const leaveRequests = allLeaveRequestData?.data;
+  console.log("allLeaveRequestData", leaveRequests);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openAddOrEditModal, setOpenAddOrEditModal] = useState(false);
 
   const handleViewLeaveDetails = (employee) => {
     setSelectedEmployee(employee);
     setOpenDetailsModal(true);
+  };
+
+  const handleAddOrOpenModal = () => {
+    setOpenAddOrEditModal(true);
+  };
+
+  const closeAddOrOpenModal = () => {
+    setOpenAddOrEditModal(false);
   };
 
   const handleCloseDetailsModal = () => {
@@ -217,11 +237,20 @@ export default function EmployeeLeaveList() {
     setPage(0);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh] rounded-lg">
       <div className="flex items-center justify-between mb-5">
         <p className="text-lg font-medium">All Employee</p>
         <Button
+          onClick={handleAddOrOpenModal}
           sx={{
             display: "flex",
             alignItems: "center",
@@ -452,6 +481,11 @@ export default function EmployeeLeaveList() {
           </div>
         </Box>
       </Modal>
+
+      <AddOrEditLeaveModal
+        openAddOrEditModal={openAddOrEditModal}
+        closeAddOrOpenModal={closeAddOrOpenModal}
+      />
     </div>
   );
 }

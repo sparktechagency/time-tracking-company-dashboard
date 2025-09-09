@@ -20,6 +20,7 @@ export default function Profile() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [profileImage, setProfileImage] = useState(profile);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const imageUrl = getImageUrl();
 
@@ -29,21 +30,21 @@ export default function Profile() {
       setEmail(profileData.email);
       setPhone(profileData.phone);
       if (profileData.profile) {
-        setProfileImage(profileData.profile);
+        setProfileImage(profileData.profile); // If there's a profile image, set it
       }
     }
   }, [profileData]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    console.log(file); // Check the uploaded file
     if (file) {
-      // Set the file for later submission
       setProfileImage(file);
 
       // Preview the selected image using FileReader (base64)
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result); // Set the base64 image preview
+        setImagePreview(reader.result); // Set the base64 image preview
       };
       reader.readAsDataURL(file); // Convert the file to base64
     }
@@ -58,9 +59,12 @@ export default function Profile() {
     const formData = new FormData();
     formData.append("data", JSON.stringify(updateProfileData));
 
-    // if (profileImage && profileImage instanceof File) {
-    //   formData.append("profileImage", profileImage);
-    // }
+    console.log("profileImage", profileImage);
+
+    // If profileImage is a File (i.e., the user uploaded an image), append it
+    if (profileImage && profileImage instanceof File) {
+      formData.append("images", profileImage); // Append the image file for upload
+    }
 
     try {
       const response = await updateProfile(formData).unwrap();
@@ -70,8 +74,8 @@ export default function Profile() {
         toast.success("Profile Updated successfully!");
         setName("");
         setPhone("");
-        setImagePreview(null); // Clear preview
-        refetch(); // Refetch profile data to reflect changes
+        setImagePreview(null); // Clear the preview after a successful update
+        refetch(); // Refetch the profile to get the latest data
       }
     } catch (err) {
       console.log(err);
@@ -85,7 +89,12 @@ export default function Profile() {
       <div className="relative">
         <div className="bg-[#efefef]">
           <img
-            src={`${imageUrl}/${profileImage}`}
+            src={
+              imagePreview ||
+              (typeof profileImage === "string"
+                ? `${imageUrl}/${profileImage}` // If profileImage is a URL, display it
+                : profileImage) // If it's a file, show base64 preview
+            }
             alt="Profile Image"
             className="rounded-full w-32 h-32 object-cover"
           />
@@ -132,7 +141,7 @@ export default function Profile() {
               disabled // Email is displayed but not editable
               onChange={(e) => setEmail(e.target.value)}
             />
-          </div>{" "}
+          </div>
           <div className="w-full">
             <TextField
               label="Phone Number"
