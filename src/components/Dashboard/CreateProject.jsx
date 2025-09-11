@@ -177,7 +177,7 @@ const CreateProject = () => {
   }
 
   return (
-    <div className="px-10 py-8 bg-[#efefef]">
+    <div className="px-10 py-8 bg-[#efefef] h-full">
       <p className="text-xl font-medium mb-5">Create New Projects Template</p>
 
       <div className="bg-white px-6 py-10 rounded-lg">

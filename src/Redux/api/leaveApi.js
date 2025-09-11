@@ -47,6 +47,41 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["leave"],
     }),
+    updateLeaveStatus: builder.mutation({
+      query: ({ status, id }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("Dashboard API Token:", accessToken);
+
+        console.log("update leave api status", status);
+
+        return {
+          url: `/leavemanagement/${id}`,
+          method: "patch",
+          body: { status: status },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["leave"],
+    }),
+    deleteLeaveRequest: builder.mutation({
+      query: (id) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("Dashboard API Token:", accessToken);
+
+        console.log("delete leave api id", id);
+
+        return {
+          url: `/leavemanagement/${id}`,
+          method: "delete",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["leave"],
+    }),
   }),
 });
 
@@ -54,4 +89,6 @@ export const {
   useGetLeaveRequestsQuery,
   // useGetLeaveBalanceQuery,
   useCreateLeaveMutation,
+  useUpdateLeaveStatusMutation,
+  useDeleteLeaveRequestMutation,
 } = dashboardApi;
