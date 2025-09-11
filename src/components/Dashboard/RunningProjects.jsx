@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -24,10 +24,12 @@ import { PiNotepadBold } from "react-icons/pi";
 import {
   useAllProjectsQuery,
   useDeleteProjectMutation,
+  useGetProjectNotesQuery,
 } from "../../Redux/api/projectApi";
 import { getImageUrl } from "../../utils/baseUrl";
 import { toast } from "sonner";
 import AssignEmployeeModal from "../Modals/AssignEmployeeModal";
+import dayjs from "dayjs";
 
 export default function RunningProjects() {
   const { data: allProjectsData, isLoading, refetch } = useAllProjectsQuery();
@@ -44,6 +46,12 @@ export default function RunningProjects() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  const { data: projectNoteData, isLoading: loadingNotes } =
+    useGetProjectNotesQuery(selectedProject?._id);
+  const projectNote = projectNoteData?.data || [];
+
+  console.log("projectNoteData", projectNote);
 
   const imageUrl = getImageUrl();
 
@@ -116,11 +124,19 @@ export default function RunningProjects() {
       }
     } catch (error) {
       console.error("Failed to delete project:", error);
+      if (
+        error.data.message ===
+        "You cannot delete a project that has employees assigned to it."
+      ) {
+        toast.error(
+          "You cannot delete a project that has employees assigned to it."
+        );
+      }
       // Optional: show some error toast or alert
     }
   };
 
-  if (isLoading) {
+  if (isLoading || loadingNotes) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <CircularProgress />
@@ -129,6 +145,7 @@ export default function RunningProjects() {
   }
 
   const filteredProjects = filterProjects();
+
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[92vh]">
       <div className="flex items-center justify-between mb-4">
@@ -209,7 +226,7 @@ export default function RunningProjects() {
                             project.status.toLowerCase() === "completed"
                               ? "#008000"
                               : project.status.toLowerCase() === "pending"
-                              ? "#3F80AE"
+                              ? "#FFDE00"
                               : project.status.toLowerCase() === "cancelled"
                               ? "#f44336"
                               : "#9e9e9e",
@@ -300,127 +317,282 @@ export default function RunningProjects() {
       />
       {/* View Details Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseDetailsModal}>
-        <div className="w-[900px] bg-white p-10 m-auto mt-20 rounded-lg">
-          <div>
-            <div className="flex items-center justify-between">
-              <p className="font-medium mb-5">View Details</p>
-              <Button
-                onClick={handleEditNow}
-                sx={{
-                  color: "#fff",
-                  textTransform: "none",
-                  bgcolor: "#3F80AE",
-                  width: "150px",
-                  height: "40px",
-                  borderRadius: "4px",
-                  "&:hover": {
-                    color: "#3F80AE",
-                    bgcolor: "white",
-                    fontWeight: "600",
-                    border: "2px solid #3F80AE",
-                  },
+        <div className="w-[900px] bg-white p-8 m-auto mt-10 rounded-lg overflow-y-auto max-h-[90vh]">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5">
+            <p className="font-medium text-lg">Project Details</p>
+            <Button
+              onClick={handleEditNow}
+              sx={{
+                color: "#fff",
+                textTransform: "none",
+                bgcolor: "#3F80AE",
+                width: "150px",
+                height: "40px",
+                borderRadius: "4px",
+                "&:hover": {
+                  color: "#3F80AE",
+                  bgcolor: "white",
+                  fontWeight: "600",
+                  border: "2px solid #3F80AE",
+                },
+              }}
+            >
+              Assign Employee
+            </Button>
+          </div>
+
+          {/* Project Images */}
+          <div className="flex gap-2 mb-5">
+            {selectedProject?.images?.length > 0 ? (
+              selectedProject.images.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={`${imageUrl}/${img}`}
+                  alt={`${selectedProject.title} ${idx + 1}`}
+                  className="w-1/3 rounded-lg object-cover"
+                  style={{ maxHeight: "200px" }}
+                />
+              ))
+            ) : (
+              <p>No images available</p>
+            )}
+          </div>
+
+          {/* Project Info */}
+          <div className="flex flex-col gap-2 mb-5">
+            <div>
+              <p className="font-medium">Title:</p>
+              <p className="text-sm text-[#545454]">{selectedProject?.title}</p>
+            </div>
+            <div>
+              <p className="font-medium">Company:</p>
+              <p className="text-sm text-[#545454]">
+                {selectedProject?.company?.name}
+              </p>
+            </div>
+            <div>
+              <p className="font-medium">Description:</p>
+              <p className="text-sm text-[#545454]">
+                {selectedProject?.description}
+              </p>
+            </div>
+            <div>
+              <p className="font-medium">Status:</p>
+              <p
+                className="text-sm text-[#545454] capitalize font-medium py-1 rounded w-20 text-center"
+                style={{
+                  backgroundColor:
+                    selectedProject?.status.toLowerCase() === "completed"
+                      ? "#008000"
+                      : selectedProject?.status.toLowerCase() === "pending"
+                      ? "#FFDE00"
+                      : selectedProject?.status.toLowerCase() === "cancelled"
+                      ? "#f44336"
+                      : "#9e9e9e",
                 }}
               >
-                Assign Employee
-              </Button>
-            </div>
-            <img
-              src={`${imageUrl}/${selectedProject?.images[0]}`}
-              alt={selectedProject?.title}
-              className="w-2/3 rounded-lg"
-            />
-            <div className="flex flex-col gap-2 mt-5">
-              <p className="text-[#333333] font-semibold text-lg">
-                {selectedProject?.title}
+                {selectedProject?.status || "N/A"}
               </p>
-              {/* <p className="text-[#545454] text-lg">
-                {selectedProject?.assignedEmployee}
-              </p> */}
-              <div>
-                <p className="font-medium">Description:</p>
-                <p className="text-sm text-[#545454]">
-                  {selectedProject?.description}
-                </p>
+            </div>
+
+            <div className="flex items-center gap-5">
+              <div className="mb-2">
+                <p className="font-medium">Time and Duration</p>
+                <Table
+                  sx={{
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    width: "300px",
+                  }}
+                >
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "#C3D8E6" }}>
+                      <TableCell
+                        sx={{ fontWeight: "600", textAlign: "center" }}
+                      >
+                        Project Time
+                      </TableCell>
+                      <TableCell
+                        sx={{ fontWeight: "600", textAlign: "center" }}
+                      >
+                        Duration
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow sx={{ borderBottom: "1px solid #ddd" }}>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {selectedProject?.projectTime
+                          ? selectedProject.projectTime
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {selectedProject?.duration
+                          ? selectedProject.duration
+                          : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>{" "}
+              {/* Project Dates Table */}
+              <div className="mb-2">
+                <p className="font-medium">Project Dates</p>
+                <Table
+                  sx={{
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    width: "300px",
+                  }}
+                >
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "#C3D8E6" }}>
+                      <TableCell
+                        sx={{ fontWeight: "600", textAlign: "center" }}
+                      >
+                        Start Date
+                      </TableCell>
+                      <TableCell
+                        sx={{ fontWeight: "600", textAlign: "center" }}
+                      >
+                        End Date
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow sx={{ borderBottom: "1px solid #ddd" }}>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {selectedProject?.startDate
+                          ? dayjs(selectedProject.startDate).format(
+                              "DD-MM-YYYY"
+                            )
+                          : "N/A"}
+                      </TableCell>
+
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {selectedProject?.endDate
+                          ? dayjs(selectedProject.endDate).format("DD-MM-YYYY")
+                          : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </div>
-              {/* <div>
-                <p className="font-medium mb-2">Key Features</p>
-                <ul className="ml-8">
-                  {selectedProject?.keyFeatures.map((feature, index) => {
-                    return (
-                      <li className="list-disc text-sm" key={index}>
-                        {feature}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div> */}
-              {/* <div>
-                <p className="font-medium mb-2">Working Time</p>
-                <div className="w-1/3">
-                  <Table sx={{ border: "1px solid #ddd", borderRadius: "8px" }}>
-                    <TableHead>
-                      <TableRow>
-                        {selectedProject?.workingTime.map((time, index) => (
-                          <TableCell
-                            key={index}
-                            sx={{
-                              border: "1px solid #ddd",
-                              textAlign: "center",
-                              fontWeight: "600",
-                            }}
-                          >
-                            {time?.type}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow>
-                        {selectedProject?.workingTime.map((time, index) => (
-                          <TableCell
-                            key={index}
-                            sx={{
-                              border: "1px solid #ddd",
-                              textAlign: "center",
-                            }}
-                          >
-                            {time?.time}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-              </div> */}
             </div>
           </div>
 
-          {/* <Button
-            onClick={handleCloseDetailsModal}
-            variant="outlined"
-            sx={{ marginTop: 2 }}
-          >
-            Close
-          </Button> */}
+          {/* Assigned Employees */}
+          <div className="mb-5">
+            <p className="font-medium mb-2">Assigned Employees</p>
+            <ul className="ml-5 list-disc">
+              {selectedProject?.employees?.length > 0 ? (
+                selectedProject.employees.map((employee, idx) => (
+                  <li key={idx} className="text-sm text-[#545454]">
+                    {employee.name}{" "}
+                    {employee.email ? `(${employee.email})` : ""}
+                  </li>
+                ))
+              ) : (
+                <p className="text-sm text-[#545454]">No employees assigned</p>
+              )}
+            </ul>
+          </div>
+
+          {/* Close Button */}
+          {/* <div className="flex justify-end">
+            <Button
+              variant="outlined"
+              onClick={handleCloseDetailsModal}
+              sx={{ mt: 2 }}
+            >
+              Close
+            </Button>
+          </div> */}
         </div>
       </Modal>
       {/* View Note Modal */}
       <Modal open={openNoteModal} onClose={handleCloseNoteModal}>
-        <div className="w-[400px] bg-white p-8 m-auto mt-36 rounded-lg">
-          <h3 className="font-medium mb-4 text-sm:">Project Note:</h3>
-          <p className="text-lg">{selectedProject?.note}</p>
-          {/* <Button
-            onClick={handleCloseNoteModal}
-            variant="outlined"
-            sx={{
-              bgcolor: "#3F80AE",
-              color: "white",
-              marginTop: "5px",
-              textTransform: "none",
-            }}
-          >
-            Close
-          </Button> */}
+        <div className="w-[1000px] bg-white p-8 m-auto mt-10 rounded-lg">
+          <p className="font-medium mb-4 text-center">Project Notes</p>
+
+          {projectNote?.length > 0 ? (
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#f4f4f4" }}>
+                  <TableCell sx={{ fontWeight: "600" }}>Created By</TableCell>
+                  <TableCell sx={{ fontWeight: "600" }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: "600" }}>Text</TableCell>
+                  <TableCell sx={{ fontWeight: "600" }}>Audio</TableCell>
+                  <TableCell sx={{ fontWeight: "600" }}>Images</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {projectNote.map((note, index) => (
+                  <TableRow
+                    key={note._id}
+                    sx={{ borderBottom: "1px solid #ddd" }}
+                  >
+                    {/* Created By */}
+                    <TableCell>
+                      {note.createdBy?.name || "Unknown Creator"}
+                    </TableCell>
+
+                    {/* Date */}
+                    <TableCell>
+                      {new Date(note.createdAt).toLocaleString()}
+                    </TableCell>
+
+                    {/* Text Content */}
+                    <TableCell>
+                      {note.content || "No text content available"}
+                    </TableCell>
+
+                    {/* Audio */}
+                    <TableCell>
+                      {note.audio?.length > 0 ? (
+                        <div>
+                          {note.audio.map((audioFile, index) => (
+                            <div key={index} className="mb-2">
+                              <audio controls>
+                                <source
+                                  src={`${imageUrl}/${audioFile}`}
+                                  type="audio/mp3"
+                                />
+                                Your browser does not support the audio element.
+                              </audio>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        "No audio available"
+                      )}
+                    </TableCell>
+
+                    {/* Images */}
+                    <TableCell>
+                      {note.images?.length > 0 ? (
+                        <div className="flex gap-2">
+                          {note.images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={`${imageUrl}/${image}`}
+                              alt={`Note Image ${index + 1}`}
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        "No image available"
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p>No notes available.</p>
+          )}
         </div>
       </Modal>
       {/* Delete Confirmation Modal */}
