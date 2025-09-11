@@ -69,6 +69,20 @@ const projectApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["project"],
     }),
+    getProjectNotes: builder.query({
+      query: (id) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("Project ID", id);
+        return {
+          url: `/note?project=${id}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["project"],
+    }),
   }),
 });
 
@@ -77,4 +91,5 @@ export const {
   useCreateProjectMutation,
   useAssignEmployeeMutation,
   useDeleteProjectMutation,
+  useGetProjectNotesQuery,
 } = projectApi;

@@ -23,7 +23,7 @@ export default function Subscription() {
   }
 
   return (
-    <div className="px-10 py-8 bg-[#efefef] h-[92vh] rounded-lg flex gap-8 justify-center flex-wrap">
+    <div className="px-10 py-8 bg-[#efefef] rounded-lg flex gap-8 justify-center flex-wrap">
       {subscriptionPlans.map((subscription) => (
         <div
           className="flex flex-col gap-5 sm:w-[45%] md:w-[30%] max-w-[345px]"
@@ -40,11 +40,11 @@ export default function Subscription() {
             sx={{
               bgcolor: "#6599BE",
               borderRadius: "8px",
-              padding: "10px",
+              padding: "8px",
             }}
           >
             <CardContent>
-              <div className="flex flex-col gap-3 text-center text-white min-h-[400px]">
+              <div className="flex flex-col gap-2 text-center text-white min-h-[350px]">
                 <p className="text-2xl">{subscription.name}</p>
                 <p className="text-3xl font-medium">${subscription.price}</p>
                 <p className="text-sm text-justify">

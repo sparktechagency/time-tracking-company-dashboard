@@ -19,150 +19,11 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { GoEye } from "react-icons/go";
 import { IoMdAdd } from "react-icons/io";
 import AddOrEditLeaveModal from "../Modals/AddOrEditLeaveModal";
-import { useGetLeaveRequestsQuery } from "../../Redux/api/leaveApi";
-
-const employeeLeaveData = [
-  {
-    serial: 1,
-    name: "John Doe",
-    email: "johndoe@sparklaundry.com",
-    contact: "+1234567890",
-    designation: "Manager",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
-    leaveType: "Sick Leave",
-    fromDate: "2025-06-01",
-    toDate: "2025-06-05",
-    totalDays: 5,
-    reason: "Flu symptoms",
-  },
-  {
-    serial: 2,
-    name: "Jane Smith",
-    email: "janesmith@freshcleaners.com",
-    contact: "+1234567891",
-    designation: "Operations Manager",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
-    leaveType: "Annual Leave",
-    fromDate: "2025-07-10",
-    toDate: "2025-07-20",
-    totalDays: 10,
-    reason: "Family vacation",
-  },
-  {
-    serial: 3,
-    name: "Robert Johnson",
-    email: "robert.johnson@officeshine.com",
-    contact: "+1234567892",
-    designation: "Team Leader",
-    status: "pending",
-    image: "https://randomuser.me/api/portraits/men/3.jpg",
-    leaveType: "Maternity Leave",
-    fromDate: "2025-06-15",
-    toDate: "2025-07-15",
-    totalDays: 30,
-    reason: "Childbirth recovery",
-  },
-  {
-    serial: 4,
-    name: "Michael Brown",
-    email: "michaelbrown@quickcarwash.com",
-    contact: "+1234567893",
-    designation: "Branch Manager",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/men/4.jpg",
-    leaveType: "Sick Leave",
-    fromDate: "2025-06-05",
-    toDate: "2025-06-07",
-    totalDays: 2,
-    reason: "Back pain",
-  },
-  {
-    serial: 5,
-    name: "Emily Davis",
-    email: "emily.davis@ecolaundry.com",
-    contact: "+1234567894",
-    designation: "Supervisor",
-    status: "pending",
-    image: "https://randomuser.me/api/portraits/women/5.jpg",
-    leaveType: "Personal Leave",
-    fromDate: "2025-08-01",
-    toDate: "2025-08-03",
-    totalDays: 3,
-    reason: "Personal matters",
-  },
-  {
-    serial: 6,
-    name: "Alice Wilson",
-    email: "alice.wilson@brighthomeclean.com",
-    contact: "+1234567895",
-    designation: "Cleaner",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/women/6.jpg",
-    leaveType: "Annual Leave",
-    fromDate: "2025-07-01",
-    toDate: "2025-07-15",
-    totalDays: 15,
-    reason: "Wedding anniversary celebration",
-  },
-  {
-    serial: 7,
-    name: "James Taylor",
-    email: "james.taylor@primeofficecare.com",
-    contact: "+1234567896",
-    designation: "Office Manager",
-    status: "pending",
-    image: "https://randomuser.me/api/portraits/men/7.jpg",
-    leaveType: "Maternity Leave",
-    fromDate: "2025-06-20",
-    toDate: "2025-07-20",
-    totalDays: 30,
-    reason: "Childbirth recovery",
-  },
-  {
-    serial: 8,
-    name: "David Martinez",
-    email: "david.martinez@speedywash.com",
-    contact: "+1234567897",
-    designation: "CEO",
-    status: "pending",
-    image: "https://randomuser.me/api/portraits/men/8.jpg",
-    leaveType: "Sick Leave",
-    fromDate: "2025-06-12",
-    toDate: "2025-06-14",
-    totalDays: 3,
-    reason: "Migraine",
-  },
-  {
-    serial: 9,
-    name: "Sophia Lee",
-    email: "sophia.lee@greenlaundry.com",
-    contact: "+1234567898",
-    designation: "Manager",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/women/9.jpg",
-    leaveType: "Annual Leave",
-    fromDate: "2025-08-05",
-    toDate: "2025-08-12",
-    totalDays: 7,
-    reason: "Holiday with family",
-  },
-  {
-    serial: 10,
-    name: "Mason Harris",
-    email: "mason.harris@cleansweephomes.com",
-    contact: "+1234567899",
-    designation: "Supervisor",
-    status: "approved",
-    image: "https://randomuser.me/api/portraits/men/10.jpg",
-    leaveType: "Sick Leave",
-    fromDate: "2025-06-22",
-    toDate: "2025-06-25",
-    totalDays: 4,
-    reason: "Stomach infection",
-  },
-];
+import {
+  useGetLeaveRequestsQuery,
+  useUpdateLeaveStatusMutation,
+} from "../../Redux/api/leaveApi";
+import dayjs from "dayjs";
 
 export default function EmployeeLeaveList() {
   const {
@@ -173,15 +34,17 @@ export default function EmployeeLeaveList() {
   const leaveRequests = allLeaveRequestData?.data;
   console.log("allLeaveRequestData", leaveRequests);
 
+  const [changeLeaveStatus] = useUpdateLeaveStatusMutation();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  // const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openAddOrEditModal, setOpenAddOrEditModal] = useState(false);
 
-  const handleViewLeaveDetails = (employee) => {
-    setSelectedEmployee(employee);
+  const handleViewLeaveDetails = (employeeId) => {
+    setSelectedEmployee(employeeId);
     setOpenDetailsModal(true);
   };
 
@@ -198,35 +61,66 @@ export default function EmployeeLeaveList() {
     setSelectedEmployee(null);
   };
 
-  const handleApproveLeave = () => {
-    const updatedEmployee = { ...selectedEmployee, status: "Approved" };
-    console.log("Approved Leave for:", updatedEmployee.name);
-    setOpenDetailsModal(false);
-    setSelectedEmployee(null);
+  const handleApproveLeave = async () => {
+    try {
+      const response = await changeLeaveStatus({
+        status: "approved",
+        id: selectedEmployee._id,
+      }).unwrap();
+      console.log("approve response", response);
+      console.log("Approved Leave for:", selectedEmployee._id);
+      setOpenDetailsModal(false);
+      setSelectedEmployee(null);
+      refetch();
+    } catch (error) {
+      console.error("Error approving leave:", error);
+    }
   };
 
-  const handleDeclineLeave = () => {
-    const updatedEmployee = { ...selectedEmployee, status: "Declined" };
-    console.log("Declined Leave for:", updatedEmployee.name);
-    setOpenDetailsModal(false);
-    setSelectedEmployee(null);
+  const handleRejectLeave = async () => {
+    const updatedEmployee = { ...selectedEmployee, status: "rejected" };
+    try {
+      await changeLeaveStatus({
+        id: selectedEmployee._id,
+        status: "rejected",
+      }).unwrap();
+      console.log("Rejected Leave for:", updatedEmployee._id);
+      setOpenDetailsModal(false);
+      setSelectedEmployee(null);
+      refetch();
+    } catch (error) {
+      console.error("Error rejecting leave:", error);
+    }
   };
 
-  const handleOpenDeleteModal = (employee) => {
-    setSelectedEmployee(employee);
-    setOpenDeleteModal(true);
-  };
+  // const handleOpenDeleteModal = (employee) => {
+  //   setSelectedEmployee(employee);
+  //   setOpenDeleteModal(true);
+  // };
 
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-    setSelectedEmployee(null);
-  };
+  // const handleCloseDeleteModal = () => {
+  //   setOpenDeleteModal(false);
+  //   setSelectedEmployee(null);
+  // };
 
-  const handleDeleteEmployee = () => {
-    console.log("Deleted Employee Leave:", selectedEmployee.name);
-    setOpenDeleteModal(false);
-    setSelectedEmployee(null);
-  };
+  // const handleDeleteEmployee = async () => {
+  //   if (!selectedEmployee) {
+  //     console.error("No employee selected for deletion.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await deleteLeaveRequest(selectedEmployee._id).unwrap();
+  //     console.log("delete response", response);
+
+  //     console.log("Deleted Employee Leave:", selectedEmployee.user.name);
+  //     setOpenDeleteModal(false);
+  //     setSelectedEmployee(null);
+  //     refetch();
+  //   } catch (error) {
+  //     console.error("Error deleting leave request:", error);
+  //   }
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -280,10 +174,7 @@ export default function EmployeeLeaveList() {
                   Email Address
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Contact No.
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                  Designation
+                  Type
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
                   Status
@@ -294,24 +185,24 @@ export default function EmployeeLeaveList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {employeeLeaveData
+              {leaveRequests
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((employee) => (
+                .map((employee, index) => (
                   <TableRow key={employee.serial}>
                     <TableCell sx={{ textAlign: "center" }}>
-                      {employee.serial}
+                      {index + 1}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
-                      {employee.name}
+                      {employee.user.name}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
-                      {employee.email}
+                      {employee.user.email}
                     </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.contact}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.designation}
+
+                    <TableCell
+                      sx={{ textAlign: "center", textTransform: "capitalize" }}
+                    >
+                      {employee.type}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
                       <div
@@ -321,9 +212,9 @@ export default function EmployeeLeaveList() {
                               ? "#008000"
                               : employee.status === "pending"
                               ? "#3F80AE"
-                              : "gray",
+                              : "#CC0505",
                           color: "white",
-                          padding: "5px",
+                          padding: "8px",
                           borderRadius: "5px",
                           textAlign: "center",
                           textTransform: "capitalize",
@@ -344,23 +235,14 @@ export default function EmployeeLeaveList() {
                             width: "30px",
                             height: "30px",
                             borderRadius: "4px",
+                            ":hover": {
+                              bgcolor: "white",
+                              color: "#658065",
+                              border: "1px solid #658065",
+                            },
                           }}
                         >
                           <GoEye />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleOpenDeleteModal(employee)}
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            bgcolor: "#CC0505",
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          <AiTwotoneDelete />
                         </IconButton>
                       </div>
                     </TableCell>
@@ -372,7 +254,7 @@ export default function EmployeeLeaveList() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={employeeLeaveData.length}
+          count={leaveRequests.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -390,10 +272,10 @@ export default function EmployeeLeaveList() {
           alignItems: "center",
         }}
       >
-        <div className="w-[800px] bg-white p-8 rounded-lg">
-          <div className="flex items-center gap-20">
-            <div className="flex flex-col gap-5">
-              <p>Name:</p>
+        <div className="w-[800px] bg-[#f0f0f0] p-8 rounded-lg">
+          <div className="flex items-center gap-5">
+            <div className="flex flex-col gap-5 text-end">
+              <p>Employee Name:</p>
               <p>Leave Type:</p>
               <p>From Date:</p>
               <p>To Date:</p>
@@ -401,12 +283,18 @@ export default function EmployeeLeaveList() {
               <p>Reason:</p>
             </div>
             <div className="flex flex-col gap-5">
-              <p className="font-medium">{selectedEmployee?.name}</p>
-              <p className="font-medium">{selectedEmployee?.leaveType}</p>
-              <p className="font-medium">{selectedEmployee?.fromDate}</p>
-              <p className="font-medium">{selectedEmployee?.toDate}</p>
+              <p className="font-medium">{selectedEmployee?.user.name}</p>
+              <p className="font-medium capitalize">{selectedEmployee?.type}</p>
+              <p className="font-medium">
+                {dayjs(selectedEmployee?.from).format("MM/DD/YYYY")}
+              </p>
+              <p className="font-medium">
+                {dayjs(selectedEmployee?.to).format("MM/DD/YYYY")}
+              </p>
               <p className="font-medium">{selectedEmployee?.totalDays}</p>
-              <p className="font-medium">{selectedEmployee?.reason}</p>
+              <p className="font-medium text-wrap">
+                {selectedEmployee?.reason}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 justify-end mt-10">
@@ -416,6 +304,11 @@ export default function EmployeeLeaveList() {
                 color: "white",
                 textTransform: "none",
                 width: "100px",
+                ":hover": {
+                  bgcolor: "#fff",
+                  color: "#008000",
+                  border: "1px solid #008000",
+                },
               }}
               onClick={handleApproveLeave}
             >
@@ -428,58 +321,17 @@ export default function EmployeeLeaveList() {
                 border: "1px solid #CC0505",
                 textTransform: "none",
                 width: "100px",
+                ":hover": {
+                  bgcolor: "#CC0505",
+                  color: "white",
+                },
               }}
-              onClick={handleDeclineLeave}
+              onClick={handleRejectLeave}
             >
-              Decline
+              Reject
             </Button>
           </div>
         </div>
-      </Modal>
-
-      {/* Delete Confirmation Modal */}
-      <Modal open={openDeleteModal} onClose={handleCloseDeleteModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 500,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            padding: 4,
-            borderRadius: 2,
-          }}
-        >
-          <p className="mb-5">
-            Are you sure you want to delete{" "}
-            <span className="font-medium">{selectedEmployee?.name}</span>'s
-            leave details?
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button
-              sx={{
-                bgcolor: "#CC0505",
-                color: "white",
-                textTransform: "none",
-              }}
-              onClick={handleDeleteEmployee}
-            >
-              Yes, Delete
-            </Button>
-            <Button
-              sx={{
-                bgcolor: "#3F80AE",
-                color: "white",
-                textTransform: "none",
-              }}
-              onClick={handleCloseDeleteModal}
-            >
-              Cancel
-            </Button>
-          </div>
-        </Box>
       </Modal>
 
       <AddOrEditLeaveModal
