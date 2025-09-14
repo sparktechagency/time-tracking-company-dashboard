@@ -11,7 +11,6 @@ import {
   Select,
 } from "@mui/material";
 
-import ProjectPieChart from "../Chart/ProjectPieChart";
 import EmployeeAreaChart from "../Chart/EmployeeAreaChart";
 import {
   useDashboardOverviewQuery,

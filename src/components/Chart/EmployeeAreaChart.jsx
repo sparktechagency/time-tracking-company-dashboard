@@ -13,7 +13,7 @@ export default function EmployeeAreaChart({ employeeMonthData }) {
   console.log("Revenue chart data:", employeeMonthData);
 
   // Get the data for the selected year from the revenueByYear object
-  const selectedYearData = employeeMonthData.data;
+  const selectedYearData = employeeMonthData?.data;
 
   return (
     <ResponsiveContainer width="100%" height={275}>

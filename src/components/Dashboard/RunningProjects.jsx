@@ -161,7 +161,7 @@ export default function RunningProjects() {
           >
             <MenuItem value="all">All</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="pending">Ongoing</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="cancelled">Cancelled</MenuItem>
           </Select>
         </FormControl>
