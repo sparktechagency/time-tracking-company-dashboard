@@ -1,13 +1,21 @@
+import { useState } from "react";
+
 import { Button, Modal } from "@mui/material";
+
 import { DateCalendar, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import EmployeeWorkingPieChart from "../Chart/EmployeeWorkingPieChart";
 import EmployeeBreakPieChart from "../Chart/EmployeeBreakPieChart";
 import EmployeeLineChart from "../Chart/EmployeeLineChart";
+
 import { IoIosTrendingDown } from "react-icons/io";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { useState } from "react";
+import { MdOutlineFileUpload } from "react-icons/md";
+
+import { toast } from "sonner";
 import { getImageUrl } from "../../utils/baseUrl";
+import { useCreatePayrollMutation } from "../../Redux/api/employeeApi";
 
 export default function EmployeeDetailsModal({
   openDetailsModal,
@@ -17,10 +25,30 @@ export default function EmployeeDetailsModal({
   const [activeButton, setActiveButton] = useState("list");
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const imageUrl = getImageUrl()
+  const [openPayrollModal, setOpenPayrollModal] = useState(false);
+  const [payrollEmployeeId, setPayrollEmployeeId] = useState(null);
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState("");
+
+  const [createPayroll] = useCreatePayrollMutation();
+
+  console.log("selectedEmployee", selectedEmployee);
+
+  const imageUrl = getImageUrl();
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
+  };
+
+  const handlePayrollModal = (employeeId) => {
+    console.log("payroll employee", employeeId);
+    setPayrollEmployeeId(employeeId);
+    handleCloseModal();
+    setOpenPayrollModal(true);
+  };
+
+  const handleClosePayrollModal = () => {
+    setOpenPayrollModal(false);
   };
 
   const handleSelectDate = () => {
@@ -30,6 +58,47 @@ export default function EmployeeDetailsModal({
   const handleCloseCalendar = (date) => {
     setShowCalendar(false);
     console.log("Selected Date:", date);
+  };
+
+  const handleFileUpload = (event) => {
+    const selectedFile = event.target.files[0];
+    console.log(selectedFile);
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError("");
+    }
+  };
+
+  const handleUploadPayroll = async () => {
+    if (!file) {
+      setError("Please select a file to upload.");
+      console.log("Error", error);
+      toast.error("Please select a file to upload.");
+    }
+    const formData = new FormData();
+    if (file) formData.append("documents", file);
+    console.log("create payroll", file, payrollEmployeeId);
+
+    const data = {
+      id: payrollEmployeeId,
+      data: formData,
+    };
+
+    console.log(data);
+
+    try {
+      const response = await createPayroll(data).unwrap();
+
+      console.log("Payroll file uploaded:", response);
+      if (response.success) {
+        toast.success("Payroll file uploaded successfully.");
+        setOpenPayrollModal(false);
+        setFile(null);
+      }
+    } catch (error) {
+      console.error("Error uploading payroll:", error);
+      toast.error("Failed to upload payroll file.");
+    }
   };
 
   // const handleDateSelect = (date) => {
@@ -89,7 +158,7 @@ export default function EmployeeDetailsModal({
               <div className="flex items-center">
                 <div
                   className={`flex items-center ${
-                    activeButton === "map" ? "justify-between" : "justify-end"
+                    activeButton === "map" ? "justify-between" : "justify-start"
                   } w-full`}
                 >
                   {activeButton === "map" && (
@@ -110,6 +179,17 @@ export default function EmployeeDetailsModal({
                     </div>
                   )}
                   <div className="flex items-center gap-3 my-2">
+                    <Button
+                      onClick={() => handlePayrollModal(selectedEmployee._id)}
+                      sx={{
+                        textTransform: "none",
+                        border: "1px solid #3F80AE",
+                        color: "#3F80AE",
+                      }}
+                    >
+                      Upload Payroll
+                    </Button>
+
                     <Button
                       sx={{
                         textTransform: "none",
@@ -306,6 +386,70 @@ export default function EmployeeDetailsModal({
               </div>
             </div>
           )}
+        </div>
+      </Modal>
+
+      {/* Payroll Upload Modal */}
+      <Modal
+        open={openPayrollModal}
+        onClose={handleClosePayrollModal}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          className="bg-white p-6 rounded-lg shadow-lg w-[400px]"
+          style={{ minWidth: "300px" }}
+        >
+          <h3 className="text-lg font-semibold mb-3">Upload Payroll</h3>
+
+          <Button
+            variant="outlined"
+            component="label"
+            fullWidth
+            sx={{
+              height: "55px",
+              width: "200px",
+              textTransform: "none",
+              outline: "none",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          >
+            <div className="flex items-center gap-1 text-[#3F80AE]">
+              <p>Upload Payroll</p>
+              <MdOutlineFileUpload />
+            </div>
+
+            <input type="file" hidden onChange={handleFileUpload} />
+          </Button>
+          <div className="flex justify-between mt-4">
+            <Button
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F80AE",
+                color: "white",
+                width: "100px",
+              }}
+              onClick={handleUploadPayroll}
+              disabled={!file}
+            >
+              Upload
+            </Button>
+            <Button
+              sx={{
+                textTransform: "none",
+                color: "#3F80AE",
+                border: "1px solid #3F80AE",
+                width: "100px",
+              }}
+              onClick={handleClosePayrollModal}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>

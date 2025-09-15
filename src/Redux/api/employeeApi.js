@@ -33,7 +33,31 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["employee"],
     }),
+
+    createPayroll: builder.mutation({
+      query: ({ id, data }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("Dashboard API Token:", accessToken);
+
+        console.log("create payroll id", id);
+        console.log("create payroll api data", data);
+
+        return {
+          url: `/payrole/${id}`,
+          method: "post",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["employee"],
+    }),
   }),
 });
 
-export const { useAllEmployeeQuery, useCreateEmployeeMutation } = dashboardApi;
+export const {
+  useAllEmployeeQuery,
+  useCreateEmployeeMutation,
+  useCreatePayrollMutation,
+} = dashboardApi;
