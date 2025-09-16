@@ -58,16 +58,16 @@ export default function EmployeeTable({
                     {index + 1 + page * rowsPerPage}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.name}
+                    {employee.name || "N/A"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.email}
+                    {employee.email || "N/A"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.phone}
+                    {employee.phone || "N/A"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {employee.designation}
+                    {employee.designation || "N/A"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <div
@@ -81,7 +81,7 @@ export default function EmployeeTable({
                             : "gray",
                       }}
                     >
-                      {employee.status}
+                      {employee.status || "N/A"}
                     </div>
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>

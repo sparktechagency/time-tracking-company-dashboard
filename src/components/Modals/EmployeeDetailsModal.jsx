@@ -16,6 +16,12 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { toast } from "sonner";
 import { getImageUrl } from "../../utils/baseUrl";
 import { useCreatePayrollMutation } from "../../Redux/api/employeeApi";
+import Map from "../UI/Map";
+
+const center = {
+  lat: 23.8041,
+  lng: 90.4152,
+};
 
 export default function EmployeeDetailsModal({
   openDetailsModal,
@@ -32,7 +38,7 @@ export default function EmployeeDetailsModal({
 
   const [createPayroll] = useCreatePayrollMutation();
 
-  console.log("selectedEmployee", selectedEmployee);
+  // console.log("selectedEmployee", selectedEmployee);
 
   const imageUrl = getImageUrl();
 
@@ -126,7 +132,7 @@ export default function EmployeeDetailsModal({
               {/* Top */}
               <div className="flex flex-col gap-2 bg-white p-3 rounded-lg">
                 <p className="font-medium mb-1">View Details</p>
-                <div className="flex gap-10">
+                <div className="flex items-center gap-10">
                   <img
                     src={`${imageUrl}/${selectedEmployee?.profile}`}
                     alt={selectedEmployee.name}
@@ -147,10 +153,12 @@ export default function EmployeeDetailsModal({
                     <div>
                       <strong>Contact:</strong> {selectedEmployee.phone}
                     </div>
-                    <div>
-                      <strong>Designation:</strong>{" "}
-                      {selectedEmployee.designation}
-                    </div>
+                    {selectedEmployee.designation && (
+                      <div>
+                        <strong>Designation:</strong>{" "}
+                        {selectedEmployee.designation}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -352,15 +360,7 @@ export default function EmployeeDetailsModal({
               )}
               {activeButton === "map" && (
                 <div>
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14607.615220208161!2d90.42194549999999!3d23.7508095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b871c90f0b41%3A0x96f471c1e5d84060!2sKhilgaon%20Taltola%20City%20Corporation%20Market!5e0!3m2!1sen!2sbd!4v1750927194433!5m2!1sen!2sbd"
-                    width="100%"
-                    height="450"
-                    style={{ border: "0" }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  <Map center={center}></Map>
                 </div>
               )}
             </div>
