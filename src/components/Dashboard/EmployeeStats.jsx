@@ -156,7 +156,7 @@ export default function EmployeeStats() {
             >
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="blocked">Blocked</MenuItem>
+              <MenuItem value="restricted">Restricted</MenuItem>
             </Select>
           </FormControl>
         </div>

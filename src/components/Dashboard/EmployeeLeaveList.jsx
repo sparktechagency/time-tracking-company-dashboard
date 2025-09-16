@@ -280,6 +280,7 @@ export default function EmployeeLeaveList() {
               <p>From Date:</p>
               <p>To Date:</p>
               <p>Total Days:</p>
+              <p>Status:</p>
               <p>Reason:</p>
             </div>
             <div className="flex flex-col gap-5">
@@ -292,6 +293,21 @@ export default function EmployeeLeaveList() {
                 {dayjs(selectedEmployee?.to).format("MM/DD/YYYY")}
               </p>
               <p className="font-medium">{selectedEmployee?.totalDays}</p>
+              <p
+                className="font-medium capitalize w-24 text-center rounded-lg text-white"
+                style={{
+                  backgroundColor:
+                    selectedEmployee?.status.toLowerCase() === "approved"
+                      ? "#008000"
+                      : selectedEmployee?.status.toLowerCase() === "pending"
+                      ? "#FFDE00"
+                      : selectedEmployee?.status.toLowerCase() === "rejected"
+                      ? "#f44336"
+                      : "#9e9e9e",
+                }}
+              >
+                {selectedEmployee?.status}
+              </p>
               <p className="font-medium text-wrap">
                 {selectedEmployee?.reason}
               </p>
