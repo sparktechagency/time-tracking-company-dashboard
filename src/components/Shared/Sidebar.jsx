@@ -66,11 +66,11 @@ export default function Sidebar() {
             icon: <RiKey2Fill fontSize={24} />,
             label: "Change Password",
           },
-          {
-            to: "/add-break-time",
-            icon: <LuCookingPot fontSize={24} />,
-            label: "Add Break Time",
-          },
+          // {
+          //   to: "/add-break-time",
+          //   icon: <LuCookingPot fontSize={24} />,
+          //   label: "Add Break Time",
+          // },
           {
             to: "/subscription",
             icon: <FaPodcast fontSize={24} />,

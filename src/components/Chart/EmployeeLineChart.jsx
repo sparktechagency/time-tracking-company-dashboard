@@ -1,4 +1,3 @@
-import React from "react";
 import {
   LineChart,
   Line,
@@ -9,51 +8,24 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Updated data for working and break time
-const data = [
-  {
-    day: "Mon",
-    workingTime: 3,
-    breakTime: 3,
-  },
-  {
-    day: "Tue",
-    workingTime: 4,
-    breakTime: 1.5,
-  },
-  {
-    day: "Wed",
-    workingTime: 3.5,
-    breakTime: 1,
-  },
-  {
-    day: "Thu",
-    workingTime: 6,
-    breakTime: 2,
-  },
-  {
-    day: "Fri",
-    workingTime: 8,
-    breakTime: 1,
-  },
-  {
-    day: "Sat",
-    workingTime: 5,
-    breakTime: 0.5,
-  },
-  {
-    day: "Sun",
-    workingTime: 4,
-    breakTime: 1,
-  },
-];
+const convertMillisecondsToHours = (ms) => {
+  return (ms / 3600000).toFixed(2);
+};
 
-const EmployeeLineChart = () => {
+const EmployeeLineChart = ({ chartData }) => {
+  console.log("chartData", chartData);
+
+  const formattedData = chartData?.dailyBreakdown?.map((item) => ({
+    ...item,
+    workingHours: convertMillisecondsToHours(item.workingHours), // Convert workingHours to hours
+    breakHours: convertMillisecondsToHours(item.breakHours), // Convert breakHours to hours
+  }));
+
   return (
     <div style={{ width: "100%", height: 240 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={data}
+          data={formattedData}
           margin={{
             top: 5,
             right: 30,
@@ -62,19 +34,19 @@ const EmployeeLineChart = () => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" />
+          <XAxis dataKey="formattedDate" />
           <YAxis />
           <Tooltip />
           <Line
             type="monotone"
-            dataKey="workingTime"
+            dataKey="workingHours"
             stroke="#008000"
             activeDot={{ r: 8 }}
             name="Working Time (hrs)"
           />
           <Line
             type="monotone"
-            dataKey="breakTime"
+            dataKey="breakHours"
             stroke="#3F80AE"
             name="Break Time (hrs)"
           />

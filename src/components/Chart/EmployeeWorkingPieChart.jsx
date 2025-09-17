@@ -1,33 +1,37 @@
 import { PieChart, Pie, Cell, Text, Rectangle } from "recharts";
+import { convertMillisecondsToHHMMSS } from "../../utils/TimeConverter";
 
-export default function EmployeeWorkingPieChart() {
-  const todaysWorkingTime = 120;
+export default function EmployeeWorkingPieChart({ workingHours, totalHours }) {
+  const totalWorkingTime = convertMillisecondsToHHMMSS(workingHours);
+  // const totalBreakTime = convertMillisecondsToHHMMSS(breakHours);
+  // const totalDuration = convertMillisecondsToHHMMSS(totalHours);
 
-  const totalWorkingTime = 480;
+  const nonWorkingTime = totalHours - workingHours;
+  // console.log("sss", nonWorkingTime);
 
-  const nonWorkingTime = totalWorkingTime - todaysWorkingTime;
+  // console.log(totalDuration, totalBreakTime, totalWorkingTime);
 
   const data = [
-    { name: "Working Time", value: todaysWorkingTime },
+    { name: "Working Time", value: workingHours },
     { name: "Non-Working Time", value: nonWorkingTime },
   ];
 
   const COLORS = {
-    "Working Time": "#3F80AE",
-    "Non-Working Time": "#D9D9D9",
+    "Working Time": "#3F80AE", // blue
+    "Non-Working Time": "#D9D9D9", //gray
   };
 
-  const convertToHMS = (minutes) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    const seconds = 0;
-    return `${String(hours).padStart(2, "0")}:${String(mins).padStart(
-      2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`;
-  };
+  // const convertToHMS = (minutes) => {
+  //   const hours = Math.floor(minutes / 60);
+  //   const mins = minutes % 60;
+  //   const seconds = 0;
+  //   return `${String(hours).padStart(2, "0")}:${String(mins).padStart(
+  //     2,
+  //     "0"
+  //   )}:${String(seconds).padStart(2, "0")}`;
+  // };
 
-  const formattedWorkingTime = convertToHMS(todaysWorkingTime);
+  // const formattedWorkingTime = convertToHMS(todaysWorkingTime);
 
   const renderCustomLabel = ({ cx, cy }) => {
     const textX = cx;
@@ -53,7 +57,7 @@ export default function EmployeeWorkingPieChart() {
           textAnchor="middle"
           style={{ fontWeight: "bold", fontSize: 16 }}
         >
-          {formattedWorkingTime}
+          {totalWorkingTime}
         </Text>
       </>
     );

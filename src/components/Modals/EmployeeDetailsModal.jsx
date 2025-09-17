@@ -15,8 +15,15 @@ import { MdOutlineFileUpload } from "react-icons/md";
 
 import { toast } from "sonner";
 import { getImageUrl } from "../../utils/baseUrl";
-import { useCreatePayrollMutation } from "../../Redux/api/employeeApi";
+import {
+  useCreatePayrollMutation,
+  useEmployeeAnalyticsQuery,
+  useEmployeeLocationByDateQuery,
+} from "../../Redux/api/employeeApi";
+
 import Map from "../UI/Map";
+import dayjs from "dayjs";
+import { millisecondsToHMSConverter } from "../../utils/TimeConverter";
 
 const center = {
   lat: 23.8041,
@@ -30,15 +37,54 @@ export default function EmployeeDetailsModal({
 }) {
   const [activeButton, setActiveButton] = useState("list");
   const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectStartDate, setSelectStartDate] = useState(null);
+  const [selectEndDate, setSelectEndDate] = useState(null);
 
   const [openPayrollModal, setOpenPayrollModal] = useState(false);
   const [payrollEmployeeId, setPayrollEmployeeId] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
 
+  const { data: allEmpolyeeLocationData, isLoading } =
+    useEmployeeLocationByDateQuery(
+      { date: selectedDate, employeeId: selectedEmployee?._id },
+      { skip: !selectedDate || !selectedEmployee?._id }
+    );
+
+  const allEmpolyeeLocation = allEmpolyeeLocationData?.data?.data;
+  // console.log("empolyeeLocationData", allEmpolyeeLocation);
+  // console.log("selected employee", selectedEmployee);
+
+  const { data: selectedEmployeeAnalytics, isLoading: loadingAnalytics } =
+    useEmployeeAnalyticsQuery(
+      {
+        startDate: selectStartDate,
+        endDate: selectEndDate,
+        employeeId: selectedEmployee?._id,
+      },
+      { skip: !selectStartDate || !selectEndDate || !selectedEmployee?._id }
+    );
+  const employeeAnalytics = selectedEmployeeAnalytics?.data;
+  console.log("employeeAnalytics", employeeAnalytics);
+
+  const filteredEmployeeLocation = allEmpolyeeLocation?.filter(
+    (location) =>
+      location.employeeId === selectedEmployee._id &&
+      location.date === selectedDate
+  );
+
+  console.log("selectedEmployeeLocation", filteredEmployeeLocation);
+
   const [createPayroll] = useCreatePayrollMutation();
 
   // console.log("selectedEmployee", selectedEmployee);
+
+  const workingHours = employeeAnalytics?.currentPeriod?.workingHours;
+  const breakHours = employeeAnalytics?.currentPeriod?.breakHours;
+  const totalHours =
+    employeeAnalytics?.currentPeriod?.workingHours +
+    employeeAnalytics?.currentPeriod?.breakHours;
 
   const imageUrl = getImageUrl();
 
@@ -61,9 +107,22 @@ export default function EmployeeDetailsModal({
     setShowCalendar(true);
   };
 
-  const handleCloseCalendar = (date) => {
+  const handleChooseDate = (date) => {
     setShowCalendar(false);
-    console.log("Selected Date:", date);
+    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    console.log("Selected Date:", formattedDate);
+    setSelectedDate(formattedDate);
+  };
+  const handleStartDate = (date) => {
+    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    console.log("Selected Start Date:", formattedDate);
+    setSelectStartDate(formattedDate);
+  };
+  const handleEndDate = (date) => {
+    setShowCalendar(false);
+    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    console.log("Selected End Date:", formattedDate);
+    setSelectEndDate(formattedDate);
   };
 
   const handleFileUpload = (event) => {
@@ -111,6 +170,10 @@ export default function EmployeeDetailsModal({
   //   setShowCalendar(false);
   //   console.log("Selected Date:", date);
   // };
+
+  if (isLoading || loadingAnalytics) {
+    <div>Loading</div>;
+  }
 
   return (
     <div>
@@ -231,7 +294,7 @@ export default function EmployeeDetailsModal({
                 <div>
                   <div className=" mb-3 rounded-lg flex gap-3">
                     <div className="flex bg-white w-full p-4 rounded-lg h-[310px]">
-                      <div className="flex flex-col gap-1">
+                      {/* <div className="flex flex-col gap-1">
                         <Button
                           sx={{
                             textTransform: "none",
@@ -295,14 +358,39 @@ export default function EmployeeDetailsModal({
                           Next Month
                         </Button>
                         <hr className="border-[#E6E6E6]" />
+                      </div> */}
+                      <div className="flex flex-col items-center w-full">
+                        <p>
+                          Start Date:{" "}
+                          <span className="text-[#3F80AE] font-medium">
+                            {" "}
+                            {selectStartDate}
+                          </span>
+                        </p>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DateCalendar
+                            sx={{ height: 280, width: "80%" }}
+                            onChange={handleStartDate}
+                            value={
+                              selectStartDate ? dayjs(selectStartDate) : null
+                            }
+                          />
+                        </LocalizationProvider>
                       </div>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateCalendar sx={{ height: 280, width: "80%" }} />
-                      </LocalizationProvider>
                     </div>
-                    <div className="bg-white p-5 w-full rounded-lg h-[310px]">
+                    <div className="flex flex-col items-center bg-white p-5 w-full rounded-lg h-[310px]">
+                      <p>
+                        End Date:{" "}
+                        <span className="text-[#3F80AE] font-medium">
+                          {selectEndDate}
+                        </span>
+                      </p>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateCalendar sx={{ height: 280, width: "80%" }} />
+                        <DateCalendar
+                          sx={{ height: 280, width: "80%" }}
+                          onChange={handleEndDate}
+                          value={selectEndDate ? dayjs(selectEndDate) : null}
+                        />
                       </LocalizationProvider>
                     </div>
                   </div>
@@ -312,19 +400,58 @@ export default function EmployeeDetailsModal({
                     {/* left */}
                     <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
                       <p className="text-lg font-semibold text-[#3F80AE]">
-                        Today Working
+                        Working Stats
                       </p>
 
-                      <EmployeeWorkingPieChart />
+                      <EmployeeWorkingPieChart
+                        workingHours={workingHours}
+                        totalHours={totalHours}
+                      />
 
                       <div className="flex items-center gap-5">
-                        <div className="flex items-center gap-2 text-red-500 font-semibold">
-                          <p className="text-sm">-120 Min</p>
-                          <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                        <div
+                          className={`flex items-center gap-2 font-semibold ${
+                            employeeAnalytics?.comparison?.breakHours?.trend ===
+                            "increase"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          <p className="text-sm">
+                            {millisecondsToHMSConverter(
+                              employeeAnalytics?.comparison?.workingHours
+                                ?.difference
+                            )}
+                          </p>
+                          {employeeAnalytics?.comparison?.workingHours
+                            ?.trend === "increase" ? (
+                            <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          ) : (
+                            <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          )}
                         </div>{" "}
-                        <div className="flex items-center gap-2 text-red-500  font-semibold">
-                          <p className="text-sm">-3.25%</p>
-                          <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                        <div
+                          className={`flex items-center gap-2 font-semibold ${
+                            employeeAnalytics?.comparison?.breakHours?.trend ===
+                            "increase"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          <p className="text-sm">
+                            {" "}
+                            {
+                              employeeAnalytics?.comparison?.workingHours
+                                ?.percentage
+                            }
+                            %
+                          </p>
+                          {employeeAnalytics?.comparison?.workingHours
+                            ?.trend === "increase" ? (
+                            <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          ) : (
+                            <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -332,25 +459,65 @@ export default function EmployeeDetailsModal({
                     {/* mid */}
                     <div className="bg-white w-1/2 p-4 flex flex-col items-center rounded-lg">
                       <p className="text-lg font-semibold text-[#3F80AE]">
-                        Today Break
+                        Break Stats
                       </p>
 
-                      <EmployeeBreakPieChart />
+                      <EmployeeBreakPieChart
+                        totalHours={totalHours}
+                        breakHours={breakHours}
+                      />
 
                       <div className="flex items-center gap-5">
-                        <div className="flex items-center gap-2 text-green-600 font-semibold">
-                          <p className="text-sm">120 Min</p>
-                          <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                        <div
+                          className={`flex items-center gap-2 font-semibold ${
+                            employeeAnalytics?.comparison?.breakHours?.trend ===
+                            "increase"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          <p className="text-sm">
+                            {millisecondsToHMSConverter(
+                              employeeAnalytics?.comparison?.breakHours
+                                ?.difference
+                            )}
+                          </p>
+                          {employeeAnalytics?.comparison?.breakHours?.trend ===
+                          "increase" ? (
+                            <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          ) : (
+                            <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          )}{" "}
                         </div>{" "}
-                        <div className="flex items-center gap-2 text-green-600  font-semibold">
-                          <p className="text-sm">3.25%</p>
-                          <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                        <div
+                          className={`flex items-center gap-2 font-semibold ${
+                            employeeAnalytics?.comparison?.breakHours?.trend ===
+                            "increase"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          <p className="text-sm">
+                            {
+                              employeeAnalytics?.comparison?.breakHours
+                                ?.percentage
+                            }
+                            %
+                          </p>
+                          {employeeAnalytics?.comparison?.breakHours?.trend ===
+                          "increase" ? (
+                            <FaArrowTrendUp className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          ) : (
+                            <IoIosTrendingDown className="bg-[#D7E8F3] size-8 p-1 rounded-full" />
+                          )}{" "}
                         </div>
                       </div>
                     </div>
                     {/* chart */}
                     <div className="w-full bg-white p-4 rounded-lg">
-                      <EmployeeLineChart />
+                      <EmployeeLineChart
+                        chartData={employeeAnalytics?.chartData}
+                      />
                     </div>
                     <div>
                       <div></div>
@@ -369,7 +536,10 @@ export default function EmployeeDetailsModal({
             <div className="flex justify-center mt-4 absolute bottom-32 left-32">
               <div className="bg-white p-4 rounded-lg shadow-md">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateCalendar sx={{ height: 280, width: "100%" }} />
+                  <DateCalendar
+                    sx={{ height: 280, width: "100%" }}
+                    onChange={handleChooseDate}
+                  />
                 </LocalizationProvider>
                 <div className="flex justify-center mt-3">
                   <Button
@@ -378,7 +548,7 @@ export default function EmployeeDetailsModal({
                       color: "white",
                       textTransform: "none",
                     }}
-                    onClick={handleCloseCalendar}
+                    onClick={() => handleChooseDate(selectedDate)}
                   >
                     Choose Date
                   </Button>

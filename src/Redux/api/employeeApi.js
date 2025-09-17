@@ -53,6 +53,32 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["employee"],
     }),
+    employeeLocationByDate: builder.query({
+      query: ({ date, employeeId }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        return {
+          url: `/timetracker/locations?date=${date}&employee=${employeeId}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["employee"],
+    }),
+    employeeAnalytics: builder.query({
+      query: ({ startDate, endDate, employeeId }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        return {
+          url: `/dashboard/time-analytics/${employeeId}?includeChart=true&startDate=${startDate}&endDate=${endDate}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["employee"],
+    }),
   }),
 });
 
@@ -60,4 +86,6 @@ export const {
   useAllEmployeeQuery,
   useCreateEmployeeMutation,
   useCreatePayrollMutation,
+  useEmployeeLocationByDateQuery,
+  useEmployeeAnalyticsQuery,
 } = dashboardApi;
