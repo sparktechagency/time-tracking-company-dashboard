@@ -1,33 +1,35 @@
 import { PieChart, Pie, Cell, Text, Rectangle } from "recharts";
+import { convertMillisecondsToHHMMSS } from "../../utils/TimeConverter";
 
-export default function EmployeeBreakPieChart() {
-  const todaysBreakTime = 80;
+export default function EmployeeBreakPieChart({ breakHours, totalHours }) {
+  const totalBreakTime = convertMillisecondsToHHMMSS(breakHours);
+  // const totalWorkingTime = convertMillisecondsToHHMMSS(workingHours);
+  // const totalDuration = convertMillisecondsToHHMMSS(totalHours);
 
-  const totalWorkingTime = 480;
-
-  const nonWorkingTime = totalWorkingTime - todaysBreakTime;
+  const workingTime = totalHours - breakHours;
+  // console.log("xxxx", workingTime);
 
   const data = [
-    { name: "Working Time", value: todaysBreakTime },
-    { name: "Non-Working Time", value: nonWorkingTime },
+    { name: "Working Time", value: workingTime },
+    { name: "Non-Working Time", value: breakHours },
   ];
 
   const COLORS = {
-    "Working Time": "#3F80AE",
-    "Non-Working Time": "#D9D9D9",
+    "Working Time": "#3F80AE", // blue
+    "Non-Working Time": "#D9D9D9", //gray
   };
 
-  const convertToHMS = (minutes) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    const seconds = 0;
-    return `${String(hours).padStart(2, "0")}:${String(mins).padStart(
-      2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`;
-  };
+  // const convertToHMS = (minutes) => {
+  //   const hours = Math.floor(minutes / 60);
+  //   const mins = minutes % 60;
+  //   const seconds = 0;
+  //   return `${String(hours).padStart(2, "0")}:${String(mins).padStart(
+  //     2,
+  //     "0"
+  //   )}:${String(seconds).padStart(2, "0")}`;
+  // };
 
-  const formattedBreakTime = convertToHMS(todaysBreakTime);
+  // const formattedBreakTime = convertToHMS(todaysBreakTime);
 
   const renderCustomLabel = ({ cx, cy }) => {
     const textX = cx;
@@ -53,7 +55,7 @@ export default function EmployeeBreakPieChart() {
           textAnchor="middle"
           style={{ fontWeight: "bold", fontSize: 16 }}
         >
-          {formattedBreakTime}
+          {totalBreakTime}
         </Text>
       </>
     );
