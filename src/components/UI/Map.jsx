@@ -8,7 +8,7 @@ const containerStyle = {
 };
 
 export default function Map({ center }) {
-  console.log(center);
+  // console.log(center);
 
   const [mapCenter, setMapCenter] = useState(null);
 
@@ -16,8 +16,8 @@ export default function Map({ center }) {
     if (center && center[0]) {
       // Assuming center is an array of coordinates [[lat, lng]]
       setMapCenter({
-        lat: center[0][1], // lat is at index 1
-        lng: center[0][0], // lng is at index 0
+        lat: center[0][1],
+        lng: center[0][0],
       });
     }
   }, [center]);
@@ -33,7 +33,7 @@ export default function Map({ center }) {
     setMarker((prevMarker) => [...prevMarker, newMarker]);
   };
 
-  console.log("marker", marker);
+  // console.log("marker", marker);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GMAP_API_KEY,
@@ -52,11 +52,10 @@ export default function Map({ center }) {
     <div>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={mapCenter} // Use the state variable `mapCenter`
+        center={mapCenter} 
         zoom={10}
-        onClick={handleMapClick} // Add click event to place markers
+        onClick={handleMapClick}
       >
-        {/* Loop through markers and create a Marker for each */}
         {marker.map((mark, index) => (
           <Marker key={index} position={{ lat: mark.lat, lng: mark.lng }} />
         ))}

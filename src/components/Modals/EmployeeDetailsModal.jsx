@@ -42,6 +42,8 @@ export default function EmployeeDetailsModal({
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
 
+  const today = dayjs().format("YYYY-MM-DD");
+
   const { data: allEmpolyeeLocationData, isLoading } =
     useEmployeeLocationByDateQuery(
       { date: selectedDate, employeeId: selectedEmployee?._id },
@@ -55,11 +57,11 @@ export default function EmployeeDetailsModal({
   const { data: selectedEmployeeAnalytics, isLoading: loadingAnalytics } =
     useEmployeeAnalyticsQuery(
       {
-        startDate: selectStartDate,
-        endDate: selectEndDate,
+        startDate: selectStartDate || today,
+        endDate: selectEndDate || today,
         employeeId: selectedEmployee?._id,
-      },
-      { skip: !selectStartDate || !selectEndDate || !selectedEmployee?._id }
+      }
+      // { skip: !selectStartDate || !selectEndDate || !selectedEmployee?._id }
     );
   const employeeAnalytics = selectedEmployeeAnalytics?.data;
   // console.log("employeeAnalytics", employeeAnalytics);
@@ -82,7 +84,7 @@ export default function EmployeeDetailsModal({
     }
   }, [filteredEmployeeLocation, mapCenter]);
 
-  console.log("mapCenter", mapCenter);
+  // console.log("mapCenter", mapCenter);
 
   const [createPayroll] = useCreatePayrollMutation();
 
@@ -256,7 +258,7 @@ export default function EmployeeDetailsModal({
                         Select Date
                       </Button>
                       <p className="text-[#3F80AE] font-medium text-lg">
-                        {selectedDate}
+                        {selectedDate ? selectedDate : "Please Select a Date"}
                       </p>
                     </div>
                   )}
