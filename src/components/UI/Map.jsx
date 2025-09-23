@@ -1,5 +1,6 @@
+import { CircularProgress } from "@mui/material";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const containerStyle = {
   width: "100%",
@@ -7,6 +8,20 @@ const containerStyle = {
 };
 
 export default function Map({ center }) {
+  console.log(center);
+
+  const [mapCenter, setMapCenter] = useState(null);
+
+  useEffect(() => {
+    if (center && center[0]) {
+      // Assuming center is an array of coordinates [[lat, lng]]
+      setMapCenter({
+        lat: center[0][1], // lat is at index 1
+        lng: center[0][0], // lng is at index 0
+      });
+    }
+  }, [center]);
+
   const [marker, setMarker] = useState([]);
 
   const handleMapClick = (e) => {
@@ -18,26 +33,38 @@ export default function Map({ center }) {
     setMarker((prevMarker) => [...prevMarker, newMarker]);
   };
 
+  console.log("marker", marker);
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GMAP_API_KEY,
     libraries: [],
   });
 
-  if (!isLoaded) {
-    return <div>Loading...</div>;
+  if (!isLoaded || !mapCenter) {
+    return (
+      <div className="flex items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
     <div>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={center}
+        center={mapCenter} // Use the state variable `mapCenter`
         zoom={10}
-        onClick={handleMapClick}
+        onClick={handleMapClick} // Add click event to place markers
       >
-        {marker.map((mark, index) => {
-          return <Marker key={index} position={mark} />;
-        })}
+        {/* Loop through markers and create a Marker for each */}
+        {marker.map((mark, index) => (
+          <Marker key={index} position={{ lat: mark.lat, lng: mark.lng }} />
+        ))}
+
+        {/* Optionally, render initial markers passed from the 'center' prop */}
+        {center.map((coord, index) => (
+          <Marker key={index} position={{ lat: coord[1], lng: coord[0] }} />
+        ))}
       </GoogleMap>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, Modal } from "@mui/material";
 
@@ -25,11 +25,6 @@ import Map from "../UI/Map";
 import dayjs from "dayjs";
 import { millisecondsToHMSConverter } from "../../utils/TimeConverter";
 
-const center = {
-  lat: 23.8041,
-  lng: 90.4152,
-};
-
 export default function EmployeeDetailsModal({
   openDetailsModal,
   handleCloseModal,
@@ -40,6 +35,7 @@ export default function EmployeeDetailsModal({
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectStartDate, setSelectStartDate] = useState(null);
   const [selectEndDate, setSelectEndDate] = useState(null);
+  const [mapCenter, setMapCenter] = useState([]);
 
   const [openPayrollModal, setOpenPayrollModal] = useState(false);
   const [payrollEmployeeId, setPayrollEmployeeId] = useState(null);
@@ -53,7 +49,7 @@ export default function EmployeeDetailsModal({
     );
 
   const allEmpolyeeLocation = allEmpolyeeLocationData?.data?.data;
-  // console.log("empolyeeLocationData", allEmpolyeeLocation);
+  console.log("empolyeeLocationData", allEmpolyeeLocation);
   // console.log("selected employee", selectedEmployee);
 
   const { data: selectedEmployeeAnalytics, isLoading: loadingAnalytics } =
@@ -66,15 +62,27 @@ export default function EmployeeDetailsModal({
       { skip: !selectStartDate || !selectEndDate || !selectedEmployee?._id }
     );
   const employeeAnalytics = selectedEmployeeAnalytics?.data;
-  console.log("employeeAnalytics", employeeAnalytics);
+  // console.log("employeeAnalytics", employeeAnalytics);
 
-  const filteredEmployeeLocation = allEmpolyeeLocation?.filter(
-    (location) =>
-      location.employeeId === selectedEmployee._id &&
-      location.date === selectedDate
-  );
+  const filteredEmployeeLocation = allEmpolyeeLocation?.filter((location) => {
+    const locationDate = dayjs(location.timestamp).format("YYYY-MM-DD");
+    return locationDate === selectedDate;
+  });
 
-  console.log("selectedEmployeeLocation", filteredEmployeeLocation);
+  console.log("filteredEmployeeLocation", filteredEmployeeLocation);
+
+  useEffect(() => {
+    if (filteredEmployeeLocation) {
+      const coordinates = filteredEmployeeLocation.map(
+        (location) => location.coordinates
+      );
+      if (JSON.stringify(coordinates) !== JSON.stringify(mapCenter)) {
+        setMapCenter(coordinates);
+      }
+    }
+  }, [filteredEmployeeLocation, mapCenter]);
+
+  console.log("mapCenter", mapCenter);
 
   const [createPayroll] = useCreatePayrollMutation();
 
@@ -233,7 +241,7 @@ export default function EmployeeDetailsModal({
                   } w-full`}
                 >
                   {activeButton === "map" && (
-                    <div>
+                    <div className="flex items-center gap-3">
                       <Button
                         sx={{
                           textTransform: "none",
@@ -247,6 +255,9 @@ export default function EmployeeDetailsModal({
                       >
                         Select Date
                       </Button>
+                      <p className="text-[#3F80AE] font-medium text-lg">
+                        {selectedDate}
+                      </p>
                     </div>
                   )}
                   <div className="flex items-center gap-3 my-2">
@@ -527,7 +538,7 @@ export default function EmployeeDetailsModal({
               )}
               {activeButton === "map" && (
                 <div>
-                  <Map center={center}></Map>
+                  <Map center={mapCenter}></Map>
                 </div>
               )}
             </div>
