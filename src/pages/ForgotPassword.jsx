@@ -18,7 +18,7 @@ const ForgotPassword = () => {
 
   const onFinish = async (e) => {
     e.preventDefault();
-    const data = email;
+    const data = { email: email };
     console.log("Success:", data);
     try {
       const response = await forgetPassword(data).unwrap();
@@ -32,6 +32,9 @@ const ForgotPassword = () => {
     } catch (error) {
       console.error("Error sending reset code:", error);
       if (error.data?.message === "User not found") {
+        toast.error("Incorrect Email.");
+      }
+      if (error.data?.message === "No account found with this email or phone") {
         toast.error("Incorrect Email.");
       }
     }
