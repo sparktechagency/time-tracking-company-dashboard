@@ -39,21 +39,35 @@ const SignIn = () => {
     console.log("signIn Data", values);
     // navigate("/", { replace: true });
     try {
+      // console.log("aaaa");
       const res = await login(values).unwrap();
-      console.log(res);
-      sessionStorage.setItem("accessToken", res?.data?.accessToken);
-      sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
+      console.log("response", res);
 
       if (res.success) {
         toast.success("Login Successful!");
+        sessionStorage.setItem("accessToken", res?.data?.accessToken);
+        sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
         navigate("/");
       } else {
         toast.error("Login Error.");
       }
     } catch (error) {
       console.log("Error user login:", error);
-      if (error.data) {
-        toast.error("Something went wrong while logging in.");
+
+      if (error.message.includes("proxy") || error.message.includes("407")) {
+        toast.error("OTP verification is required. Please verify your OTP.");
+        navigate("/otp-verification");
+        return;
+      }
+
+      if (error.data.message === "Incorrect password, please try again.") {
+        toast.error("Incorrect Password");
+      }
+      if (
+        error.data.message ===
+        "No account found with this email, please try with valid email or create an account."
+      ) {
+        toast.error("User Not Found With This E-Mail");
       }
     }
   };

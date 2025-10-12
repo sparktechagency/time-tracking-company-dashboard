@@ -56,6 +56,8 @@ const dashboardApi = baseApi.injectEndpoints({
     employeeLocationByDate: builder.query({
       query: ({ date, employeeId }) => {
         const accessToken = sessionStorage.getItem("accessToken");
+        console.log("date", date);
+        console.log("employeeId", employeeId);
         return {
           url: `/timetracker/locations?date=${date}&employee=${employeeId}`,
           method: "GET",
