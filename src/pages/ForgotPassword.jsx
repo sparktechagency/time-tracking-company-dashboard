@@ -25,7 +25,7 @@ const ForgotPassword = () => {
       console.log("response token", response);
       if (response.success === true) {
         localStorage.setItem("otpToken", response?.data?.forgetToken);
-        localStorage.setItem("userEmail", email);
+        sessionStorage.setItem("userEmail", email);
         toast.success("An OTP has been sent to your email!");
         navigate("/verify-otp");
       }

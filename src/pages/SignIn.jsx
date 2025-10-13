@@ -52,23 +52,47 @@ const SignIn = () => {
         toast.error("Login Error.");
       }
     } catch (error) {
-      console.log("Error user login:", error);
+      console.log("Login error object:", error);
 
-      if (error.message.includes("proxy") || error.message.includes("407")) {
+      // Normalize message
+      const message = (
+        error?.message ||
+        error?.error ||
+        (typeof error?.data === "string" ? error.data : "")
+      ).toLowerCase();
+
+      // Catch proxy/network errors
+      if (
+        message.includes("network error") ||
+        message.includes("proxy") ||
+        message.includes("407") ||
+        message.includes("unexpected_proxy_auth")
+      ) {
         toast.error("OTP verification is required. Please verify your OTP.");
-        navigate("/otp-verification");
+        navigate("/verify-otp", {
+          state: { email: values.email },
+          replace: true,
+        });
         return;
       }
 
-      if (error.data.message === "Incorrect password, please try again.") {
+      // API-level errors (only if request succeeded)
+      const apiMessage = error?.data?.message || "";
+      if (apiMessage === "Incorrect password, please try again.") {
         toast.error("Incorrect Password");
+        return;
       }
+
       if (
-        error.data.message ===
+        apiMessage ===
         "No account found with this email, please try with valid email or create an account."
       ) {
         toast.error("User Not Found With This E-Mail");
+        return;
       }
+
+      // Generic fallback
+      toast.error("Login failed. Please try again later.");
     }
   };
 
