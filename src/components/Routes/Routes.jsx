@@ -11,7 +11,6 @@ import EmployeeStats from "../Dashboard/EmployeeStats";
 import RunningProjects from "../Dashboard/RunningProjects";
 import ChangePassword from "../Dashboard/ChangePassword";
 import AddBreakTime from "../Dashboard/AddBreakTime";
-import Notifications from "../Dashboard/Notifications";
 import Profile from "../Dashboard/Profile";
 import Subscription from "../Dashboard/Subscription";
 import EmployeeLeaveList from "../Dashboard/EmployeeLeaveList";
@@ -82,10 +81,7 @@ const router = createBrowserRouter([
             path: "employee-leave-list",
             element: <EmployeeLeaveList />,
           },
-          {
-            path: "notifications",
-            element: <Notifications />,
-          },
+
           {
             path: "profile",
             element: <Profile />,
