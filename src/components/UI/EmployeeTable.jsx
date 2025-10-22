@@ -8,18 +8,34 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { GoEye } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
+import { TbReport } from "react-icons/tb";
+import EmployeeReportModal from "../Modals/EmployeeReportModal";
 
 export default function EmployeeTable({
   filteredUsers,
   page,
   rowsPerPage,
   handleViewDetails,
-  handleOpenBlockModal,
-  handleOpenDeleteModal,
+  // handleOpenBlockModal,
+  // handleOpenDeleteModal,
 }) {
+  const [reportOpen, setReportOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+  const handleOpenReportModal = (employee) => {
+    setSelectedEmployee(employee);
+    setReportOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setReportOpen(false);
+    setSelectedEmployee(null);
+  };
+
   return (
     <div>
       <TableContainer component={Paper} sx={{ border: "1px solid #e6e6e6" }}>
@@ -106,6 +122,24 @@ export default function EmployeeTable({
                       </IconButton>
                       <IconButton
                         size="small"
+                        onClick={() => handleOpenReportModal(employee)}
+                        sx={{
+                          color: "#fff",
+                          fontSize: "20px",
+                          bgcolor: "#3F80AE",
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "4px",
+                          "&:hover": {
+                            color: "#3F80AE",
+                            border: "1px solid #3F80AE",
+                          },
+                        }}
+                      >
+                        <TbReport />
+                      </IconButton>
+                      {/* <IconButton
+                        size="small"
                         onClick={() => handleOpenBlockModal(employee)}
                         sx={{
                           color: "#fff",
@@ -139,7 +173,7 @@ export default function EmployeeTable({
                         }}
                       >
                         <AiTwotoneDelete />
-                      </IconButton>
+                      </IconButton> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -147,6 +181,12 @@ export default function EmployeeTable({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <EmployeeReportModal
+        open={reportOpen}
+        onClose={handleCloseReportModal}
+        employee={selectedEmployee}
+      />
     </div>
   );
 }
