@@ -81,6 +81,19 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       providesTags: ["employee"],
     }),
+    employeeReport: builder.query({
+      query: ({ employeeId, language, month }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        return {
+          url: `/timetracker/reports/monthly?month=${month}&employee=${employeeId}&lang=${language}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["employee"],
+    }),
   }),
 });
 
@@ -90,4 +103,5 @@ export const {
   useCreatePayrollMutation,
   useEmployeeLocationByDateQuery,
   useEmployeeAnalyticsQuery,
+  useEmployeeReportQuery,
 } = dashboardApi;
