@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import { useState } from "react";
 import dayjs from "dayjs";
 import {
   Modal,
@@ -15,8 +14,7 @@ import {
   CircularProgress,
   Button,
 } from "@mui/material";
-import { useEmployeeReportQuery } from "../../Redux/api/employeeApi";
-import { skipToken } from "@reduxjs/toolkit/query";
+import { toast } from "sonner";
 
 const modalStyle = {
   position: "absolute",
@@ -35,77 +33,69 @@ const modalStyle = {
 };
 
 function lastNMonthsOptions(n = 12) {
-  const opts = [];
+  const months = [];
   const now = dayjs();
   for (let i = 0; i < n; i++) {
     const month = now.subtract(i, "month");
-    opts.push({
+    months.push({
       value: month.format("YYYY-MM"),
       label: month.format("MMMM YYYY"),
     });
   }
-  return opts;
+  return months;
 }
 
 export default function EmployeeReportModal({ open, onClose, employee }) {
   console.log(employee);
   const [language, setLanguage] = useState("");
   const [month, setMonth] = useState("");
-  const [blobUrl, setBlobUrl] = useState(null);
-  const [filename, setFilename] = useState("");
 
   const monthOptions = lastNMonthsOptions(12);
 
-  const {
-    data: employeeReport,
-    isLoading,
-    isError,
-  } = useEmployeeReportQuery(
-    employee && month && language
-      ? { employeeId: employee._id, month, language }
-      : skipToken
-  );
-
-  console.log(employeeReport);
-
-  // Convert data to blob URL
-  useEffect(() => {
-    if (!employeeReport) return;
-
-    let url;
-    if (employeeReport instanceof Blob) {
-      url = URL.createObjectURL(employeeReport);
-    } else if (employeeReport.url) {
-      url = employeeReport.url;
-    }
-
-    if (url) {
-      setBlobUrl(url);
-      const safeName = (employee?.name || "report").replace(/\s+/g, "_");
-      setFilename(`${safeName}_${month}_${language}.pdf`);
-    }
-
-    return () => {
-      if (url) URL.revokeObjectURL(url);
-      setBlobUrl(null);
-    };
-  }, [employeeReport, employee, month, language]);
-
-  const handleDownload = () => {
-    if (!blobUrl) return;
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  };
-
   const handleClose = () => {
-    setBlobUrl(null);
     setLanguage("");
     setMonth("");
     onClose();
+  };
+
+  const handleDownload = async () => {
+    if (!employee || !month || !language) return;
+
+    const token = sessionStorage.getItem("accessToken");
+    const downloadUrl = `${
+      import.meta.env.VITE_BASE_URL
+    }/timetracker/reports/monthly?month=${month}&employee=${
+      employee._id
+    }&lang=${language}`;
+
+    try {
+      const response = await fetch(downloadUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`, // This is the pre-header
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to download report");
+
+      toast.info("Preparing your download...", { duration: 2000 });
+
+      const blob = await response.blob();
+      setTimeout(() => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `report-${month}-${employee.name || "employee"}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        setLanguage("");
+        setMonth("");
+        onClose();
+      }, 2000); // 2 seconds delay
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -129,9 +119,9 @@ export default function EmployeeReportModal({ open, onClose, employee }) {
 
             <div className="flex items-center justify-end gap-2">
               <Button
+                onClick={handleClose}
                 variant="outlined"
                 size="small"
-                onClick={handleClose}
                 sx={{
                   textTransform: "none",
                 }}
@@ -139,15 +129,14 @@ export default function EmployeeReportModal({ open, onClose, employee }) {
                 Close
               </Button>
               <Button
-                variant="contained"
-                size="small"
                 onClick={handleDownload}
-                disabled={!blobUrl}
+                variant="outlined"
+                size="small"
                 sx={{
                   textTransform: "none",
                 }}
               >
-                Download PDF
+                Download
               </Button>
             </div>
           </div>
@@ -195,7 +184,7 @@ export default function EmployeeReportModal({ open, onClose, employee }) {
             </div>
           </Grid>
 
-          <Box sx={{ flex: 1, minHeight: 120, overflow: "hidden" }}>
+          {/* <Box sx={{ flex: 1, minHeight: 120, overflow: "hidden" }}>
             {isLoading && (
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <CircularProgress size={20} />
@@ -224,7 +213,7 @@ export default function EmployeeReportModal({ open, onClose, employee }) {
                 No report available for the selected month/language.
               </Typography>
             )}
-          </Box>
+          </Box> */}
         </Box>
       </Fade>
     </Modal>
