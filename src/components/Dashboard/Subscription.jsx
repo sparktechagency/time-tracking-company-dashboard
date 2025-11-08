@@ -3,8 +3,11 @@ import { useGetSubscriptionPlansQuery } from "../../Redux/api/dashboardApi";
 import { GoDotFill } from "react-icons/go";
 
 export default function Subscription() {
-  const { data: subscriptionPlansData, isLoading } =
-    useGetSubscriptionPlansQuery();
+  const {
+    data: subscriptionPlansData,
+    isLoading,
+    isError,
+  } = useGetSubscriptionPlansQuery();
   const subscriptionPlans = subscriptionPlansData?.data || [];
   console.log("subscriptionPlans", subscriptionPlans);
 
@@ -22,44 +25,60 @@ export default function Subscription() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center text-red-500">
+        <p>There was an error while loading your data.</p>
+        <p>Please Reload</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="px-10 py-8 bg-[#efefef] rounded-lg flex gap-8 justify-center flex-wrap">
-      {subscriptionPlans.map((subscription) => (
-        <div
-          className="flex flex-col gap-5 sm:w-[45%] md:w-[30%] max-w-[345px]"
-          key={subscription.id}
-        >
-          <div className="bg-[#3F80AE] rounded-lg py-3 px-5 text-white">
-            <div className="flex items-center justify-between">
-              <p className="text-lg font-semibold">{subscription.name}</p>
-              <p className="text-lg font-semibold"> ${subscription.price}</p>
-            </div>
-            <p className="text-xs mt-2">Payment Package</p>
-          </div>
-          <Card
-            sx={{
-              bgcolor: "#6599BE",
-              borderRadius: "8px",
-              padding: "8px",
-            }}
+    <div className="px-10 py-8 bg-[#efefef] rounded-lg flex gap-8 justify-center items-center flex-wrap h-[90vh]">
+      {subscriptionPlans.length > 0 ? (
+        subscriptionPlans.map((subscription) => (
+          <div
+            className="flex flex-col gap-5 sm:w-[45%] md:w-[30%] max-w-[345px]"
+            key={subscription.id}
           >
-            <CardContent>
-              <div className="flex flex-col gap-2 text-center text-white min-h-[350px]">
-                <p className="text-2xl">{subscription.name}</p>
-                <p className="text-3xl font-medium">${subscription.price}</p>
-                <p className="text-sm text-justify">
-                  {subscription.description}
-                </p>
-                {subscription.features.map((feature, index) => (
-                  <div key={index} className="text-sm flex items-center gap-1">
-                    <GoDotFill /> <p>{feature}</p>
-                  </div>
-                ))}
+            <div className="bg-[#3F80AE] rounded-lg py-3 px-5 text-white">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-semibold">{subscription.name}</p>
+                <p className="text-lg font-semibold"> ${subscription.price}</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
+              <p className="text-xs mt-2">Payment Package</p>
+            </div>
+            <Card
+              sx={{
+                bgcolor: "#6599BE",
+                borderRadius: "8px",
+                padding: "8px",
+              }}
+            >
+              <CardContent>
+                <div className="flex flex-col gap-2 text-center text-white min-h-[350px]">
+                  <p className="text-2xl">{subscription.name}</p>
+                  <p className="text-3xl font-medium">${subscription.price}</p>
+                  <p className="text-sm text-justify">
+                    {subscription.description}
+                  </p>
+                  {subscription.features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className="text-sm flex items-center gap-1"
+                    >
+                      <GoDotFill /> <p>{feature}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ))
+      ) : (
+        <p>No Subscription plan found.</p>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuCalendar } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 import { LuFolderKanban } from "react-icons/lu";
@@ -57,6 +57,14 @@ export default function Dashboard() {
 
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
 
+  useEffect(() => {
+    if (!isError) return;
+    const t = setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [isError]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
@@ -66,7 +74,7 @@ export default function Dashboard() {
   }
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center text-red-500">
         <p>There was an error while loading your data.</p>
         <p>Please Reload</p>
       </div>

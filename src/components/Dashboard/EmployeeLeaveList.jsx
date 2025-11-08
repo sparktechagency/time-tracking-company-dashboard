@@ -14,7 +14,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { GoEye } from "react-icons/go";
 import { IoMdAdd } from "react-icons/io";
@@ -29,6 +29,7 @@ export default function EmployeeLeaveList() {
   const {
     data: allLeaveRequestData,
     isLoading,
+    isError,
     refetch,
   } = useGetLeaveRequestsQuery();
   const leaveRequests = allLeaveRequestData?.data;
@@ -131,10 +132,27 @@ export default function EmployeeLeaveList() {
     setPage(0);
   };
 
+  useEffect(() => {
+    if (!isError) return;
+    const t = setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [isError]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <CircularProgress />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center text-red-500">
+        <p>There was an error while loading your data.</p>
+        <p>Please Reload</p>
       </div>
     );
   }
@@ -185,69 +203,80 @@ export default function EmployeeLeaveList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {leaveRequests
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((employee, index) => (
-                  <TableRow key={employee.serial}>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {index + 1}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.user.name}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      {employee.user.email}
-                    </TableCell>
+              {leaveRequests.length > 0 ? (
+                leaveRequests
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((employee, index) => (
+                    <TableRow key={employee.serial}>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {index + 1}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {employee.user.name}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {employee.user.email}
+                      </TableCell>
 
-                    <TableCell
-                      sx={{ textAlign: "center", textTransform: "capitalize" }}
-                    >
-                      {employee.type}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <div
-                        style={{
-                          backgroundColor:
-                            employee.status === "approved"
-                              ? "#008000"
-                              : employee.status === "pending"
-                              ? "#3F80AE"
-                              : "#CC0505",
-                          color: "white",
-                          padding: "8px",
-                          borderRadius: "5px",
+                      <TableCell
+                        sx={{
                           textAlign: "center",
                           textTransform: "capitalize",
                         }}
                       >
-                        {employee.status}
-                      </div>
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <div className="flex items-center justify-center gap-2">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleViewLeaveDetails(employee)}
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            bgcolor: "#658065",
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "4px",
-                            ":hover": {
-                              bgcolor: "white",
-                              color: "#658065",
-                              border: "1px solid #658065",
-                            },
+                        {employee.type}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            backgroundColor:
+                              employee.status === "approved"
+                                ? "#008000"
+                                : employee.status === "pending"
+                                ? "#3F80AE"
+                                : "#CC0505",
+                            color: "white",
+                            padding: "8px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            textTransform: "capitalize",
                           }}
                         >
-                          <GoEye />
-                        </IconButton>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          {employee.status}
+                        </div>
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <div className="flex items-center justify-center gap-2">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleViewLeaveDetails(employee)}
+                            sx={{
+                              color: "#fff",
+                              fontSize: "20px",
+                              bgcolor: "#658065",
+                              width: "30px",
+                              height: "30px",
+                              borderRadius: "4px",
+                              ":hover": {
+                                bgcolor: "white",
+                                color: "#658065",
+                                border: "1px solid #658065",
+                              },
+                            }}
+                          >
+                            <GoEye />
+                          </IconButton>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} sx={{ textAlign: "center" }}>
+                    Nothing on leave list.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -300,6 +300,11 @@ export default function EmployeeDetailsModal({
                     >
                       Map View
                     </Button>
+                    {!selectStartDate && !selectEndDate && (
+                      <p className="text-red-500 text-sm mt-2">
+                        Please select start and end date
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
