@@ -12,4 +12,7 @@ export default defineConfig({
   preview: {
     allowedHosts: ["company.alphatrack.app"],
   },
+  define: {
+    __API_BASE_URL__: JSON.stringify("https://company.alphatrack.app"),
+  },
 });

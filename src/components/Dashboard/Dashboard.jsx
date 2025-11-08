@@ -65,7 +65,12 @@ export default function Dashboard() {
     );
   }
   if (isError) {
-    return <div>Error loading data.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <p>There was an error while loading your data.</p>
+        <p>Please Reload</p>
+      </div>
+    );
   }
 
   return (
