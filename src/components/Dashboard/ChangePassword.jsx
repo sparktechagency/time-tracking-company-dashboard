@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   TextField,
@@ -43,7 +44,6 @@ export default function ChangePassword() {
     };
     try {
       const response = await changePassword(payload).unwrap();
-      console.log("Password changed successfully:", response);
 
       if (response.success) {
         setCurrentPassword("");
@@ -52,14 +52,13 @@ export default function ChangePassword() {
         toast.success("Password changed successfully!");
       }
     } catch (err) {
-      console.error("Error changing password:", err);
       setError("Failed to change password. Please try again later.");
     }
   };
 
   return (
     <div className="px-10 py-8 bg-[#efefef] h-[91vh] rounded-lg">
-      <div className="bg-white py-40 rounded-lg">
+      <div className="bg-white py-20 rounded-lg">
         <div className="max-w-2xl mx-auto bg-[#C3D8E6] p-20 rounded-lg">
           <p className="text-3xl font-semibold text-center pb-10 text-[#39749E]">
             Change Your Password
@@ -68,8 +67,12 @@ export default function ChangePassword() {
             <div className="flex flex-col gap-3">
               {/* Old Password Field */}
               <div>
+                <label htmlFor="oldPassword" className="block mb-1">
+                  Old Password
+                </label>
                 <TextField
-                  label="Old Password"
+                  id="oldPassword"
+                  placeholder="Enter current password"
                   type={showPassword ? "text" : "password"}
                   fullWidth
                   value={currentPassword}
@@ -79,11 +82,6 @@ export default function ChangePassword() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          aria-label={
-                            showPassword
-                              ? "hide the password"
-                              : "display the password"
-                          }
                           onClick={handleClickShowPassword}
                           edge="end"
                         >
@@ -94,10 +92,15 @@ export default function ChangePassword() {
                   }}
                 />
               </div>
+
               {/* New Password Field */}
               <div>
+                <label htmlFor="newPassword" className="block mb-1">
+                  New Password
+                </label>
                 <TextField
-                  label="New Password"
+                  id="newPassword"
+                  placeholder="Enter new password"
                   type={showNewPassword ? "text" : "password"}
                   fullWidth
                   value={newPassword}
@@ -107,11 +110,6 @@ export default function ChangePassword() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          aria-label={
-                            showNewPassword
-                              ? "hide the password"
-                              : "display the password"
-                          }
                           onClick={handleClickShowNewPassword}
                           edge="end"
                         >
@@ -122,10 +120,15 @@ export default function ChangePassword() {
                   }}
                 />
               </div>
-              {/* Confirm New Password Field */}
+
+              {/* Confirm Password Field */}
               <div>
+                <label htmlFor="confirmPassword" className="block mb-1">
+                  Confirm New Password
+                </label>
                 <TextField
-                  label="Confirm New Password"
+                  id="confirmPassword"
+                  placeholder="Re-enter new password"
                   type={showConfirmPassword ? "text" : "password"}
                   fullWidth
                   value={confirmPassword}
@@ -135,11 +138,6 @@ export default function ChangePassword() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          aria-label={
-                            showConfirmPassword
-                              ? "hide the password"
-                              : "display the password"
-                          }
                           onClick={handleClickShowConfirmPassword}
                           edge="end"
                         >
@@ -150,12 +148,14 @@ export default function ChangePassword() {
                   }}
                 />
               </div>
+
               {/* Error Message */}
               {error && (
-                <div>
-                  <Typography color="error">{error}</Typography>
-                </div>
+                <Typography color="error" sx={{ mt: 1 }}>
+                  {error}
+                </Typography>
               )}
+
               {/* Submit Button */}
               <div>
                 <Button
