@@ -11,7 +11,7 @@ import EmployeeLineChart from "../Chart/EmployeeLineChart";
 
 import { IoIosTrendingDown } from "react-icons/io";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { MdOutlineFileUpload } from "react-icons/md";
+import { MdCheckCircle, MdOutlineFileUpload } from "react-icons/md";
 
 import { toast } from "sonner";
 import { getImageUrl } from "../../utils/baseUrl";
@@ -598,17 +598,42 @@ export default function EmployeeDetailsModal({
             component="label"
             fullWidth
             sx={{
-              height: "55px",
+              height: "40px",
               width: "200px",
               textTransform: "none",
               outline: "none",
               border: "1px solid #ccc",
               borderRadius: "4px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              flexDirection: "column",
+              backgroundColor: file ? "#f0f7ff" : "transparent",
+              borderColor: file ? "#3F80AE" : "#ccc",
+              "&:hover": {
+                backgroundColor: file ? "#e6f2ff" : "transparent",
+                borderColor: "#3F80AE",
+              },
             }}
           >
             <div className="flex items-center gap-1 text-[#3F80AE]">
-              <p>Upload Payroll</p>
-              <MdOutlineFileUpload />
+              {file ? (
+                <>
+                  <MdCheckCircle size={18} />
+                  <p
+                    className="text-xs truncate max-w-[150px]"
+                    title={file.name}
+                  >
+                    {file.name}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>Upload Payroll</p>
+                  <MdOutlineFileUpload />
+                </>
+              )}
             </div>
 
             <input type="file" hidden onChange={handleFileUpload} />
