@@ -15,26 +15,26 @@ const dashboardApi = baseApi.injectEndpoints({
       },
       providesTags: ["leave"],
     }),
-    // getLeaveBalance: builder.query({
-    //   query: () => {
-    //     const accessToken = sessionStorage.getItem("accessToken");
-    //     return {
-    //       url: "/leavebalance",
-    //       method: "GET",
-    //       headers: {
-    //         Authorization: `Bearer ${accessToken}`,
-    //       },
-    //     };
-    //   },
-    //   providesTags: ["leave"],
-    // }),
+    getLeaveBalance: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        return {
+          url: "/leavebalance",
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["leave"],
+    }),
 
-    createLeave: builder.mutation({
+    manageLeave: builder.mutation({
       query: (data) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log("Dashboard API Token:", accessToken);
 
-        console.log("create leave api data", data);
+        console.log("manage leave api data", data);
 
         return {
           url: "/leavebalance",
@@ -87,8 +87,8 @@ const dashboardApi = baseApi.injectEndpoints({
 
 export const {
   useGetLeaveRequestsQuery,
-  // useGetLeaveBalanceQuery,
-  useCreateLeaveMutation,
+  useGetLeaveBalanceQuery,
+  useManageLeaveMutation,
   useUpdateLeaveStatusMutation,
   useDeleteLeaveRequestMutation,
 } = dashboardApi;

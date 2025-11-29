@@ -1,22 +1,53 @@
-import React, { useState } from "react";
-import { Modal, TextField, Box, Button } from "@mui/material";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  TextField,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import { toast } from "sonner";
-import { useCreateLeaveMutation } from "../../Redux/api/leaveApi";
+import {
+  useGetLeaveBalanceQuery,
+  useManageLeaveMutation,
+} from "../../Redux/api/leaveApi";
 
 export default function AddOrEditLeaveModal({
   openAddOrEditModal,
   closeAddOrOpenModal,
 }) {
+  const [formErrors, setFormErrors] = useState({});
+
+  const { data: allLeaveBalanceData } = useGetLeaveBalanceQuery();
+  const leaveBalanceData = allLeaveBalanceData?.data || {};
+  console.log("leave balance data", leaveBalanceData);
+  const [manageLeave] = useManageLeaveMutation();
+
   const [leaveBalance, setLeaveBalance] = useState({
     casualLeave: "",
     sickLeave: "",
     wpLeave: "",
     earnLeave: "",
-    annualLeave: "",
   });
-  const [formErrors, setFormErrors] = useState({});
 
-  const [createLeave] = useCreateLeaveMutation();
+  // Update form fields when data is loaded
+  useEffect(() => {
+    if (leaveBalanceData && leaveBalanceData._id) {
+      setLeaveBalance({
+        casualLeave: leaveBalanceData.casualLeave || "",
+        sickLeave: leaveBalanceData.sickLeave || "",
+        wpLeave: leaveBalanceData.wpLeave || "",
+        earnLeave: leaveBalanceData.earnLeave || "",
+      });
+    }
+  }, [leaveBalanceData]);
 
   const handleAddEmployee = async () => {
     const errors = {};
@@ -37,12 +68,11 @@ export default function AddOrEditLeaveModal({
       sickLeave: Number(leaveBalance.sickLeave),
       wpLeave: Number(leaveBalance.wpLeave),
       earnLeave: Number(leaveBalance.earnLeave),
-      annualLeave: Number(leaveBalance.annualLeave),
     };
     console.log("leave details", leaveDetails);
 
     try {
-      const response = await createLeave(leaveDetails).unwrap();
+      const response = await manageLeave(leaveDetails).unwrap();
       console.log("Employee created successfully:", response);
       if (response.success) {
         toast.success("Leave Created Successfully..!");
@@ -53,7 +83,6 @@ export default function AddOrEditLeaveModal({
           sickLeave: "",
           wpLeave: "",
           earnLeave: "",
-          annualLeave: "",
         });
         setFormErrors({});
 
@@ -68,11 +97,29 @@ export default function AddOrEditLeaveModal({
     }
   };
 
+  // Prepare table data
+  const leaveTypes = [
+    { label: "Casual Leave", key: "casualLeave" },
+    { label: "Sick Leave", key: "sickLeave" },
+    { label: "Leave Without Pay", key: "wpLeave" },
+    { label: "Earn Leave", key: "earnLeave" },
+  ];
+
   return (
     <Modal
       open={openAddOrEditModal}
       onClose={closeAddOrOpenModal}
       aria-labelledby="add-employee-modal"
+      closeAfterTransition
+      slotProps={{
+        backdrop: {
+          timeout: 500,
+          sx: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(3px)",
+          },
+        },
+      }}
     >
       <Box
         sx={{
@@ -85,13 +132,70 @@ export default function AddOrEditLeaveModal({
           borderRadius: 1,
           boxShadow: 24,
           p: 4,
+          maxHeight: "90vh",
+          overflow: "auto",
+          animation: openAddOrEditModal
+            ? "slideIn 0.3s ease-out"
+            : "slideOut 0.3s ease-in",
+          "@keyframes slideIn": {
+            "0%": {
+              opacity: 0,
+              transform: "translate(-50%, -45%) scale(0.95)",
+            },
+            "100%": {
+              opacity: 1,
+              transform: "translate(-50%, -50%) scale(1)",
+            },
+          },
+          "@keyframes slideOut": {
+            "0%": {
+              opacity: 1,
+              transform: "translate(-50%, -50%) scale(1)",
+            },
+            "100%": {
+              opacity: 0,
+              transform: "translate(-50%, -45%) scale(0.95)",
+            },
+          },
         }}
       >
-        <p className="text-[#3F80AE] font-medium text-2xl mb-4 text-center">
-          Add Leave Category
+        {/* Leave Balance Table */}
+        {leaveBalanceData && leaveBalanceData._id && (
+          <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ bgcolor: "#3F80AE" }}>
+                  <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    Leave Type
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    Balance
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {leaveTypes.map((leave) => (
+                  <TableRow key={leave.key} hover>
+                    <TableCell>{leave.label}</TableCell>
+                    <TableCell align="right">
+                      {leaveBalanceData[leave.key] || 0}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+
+        <p className="text-[#3F80AE] font-medium text-2xl mb-1 text-center">
+          Manage Leave Category
         </p>
-        <form className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1 items-center">
+
+        <form className="flex flex-col gap-1">
+          <div className="flex flex-col items-center">
             <TextField
               label="Casual Leave"
               fullWidth
@@ -104,8 +208,6 @@ export default function AddOrEditLeaveModal({
                   casualLeave: e.target.value,
                 })
               }
-              // error={!!formErrors.casualLeave}
-              // helperText={formErrors.casualLeave}
               sx={{
                 "& .MuiInputBase-root": {
                   height: "50px",
@@ -166,29 +268,9 @@ export default function AddOrEditLeaveModal({
                 },
               }}
             />
-            <TextField
-              label="Annual Leave"
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              value={leaveBalance.annualLeave}
-              onChange={(e) =>
-                setLeaveBalance({
-                  ...leaveBalance,
-                  annualLeave: e.target.value,
-                })
-              }
-              error={!!formErrors.earnLeave}
-              helperText={formErrors.earnLeave}
-              sx={{
-                "& .MuiInputBase-root": {
-                  height: "50px",
-                },
-              }}
-            />
           </div>
 
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-end gap-2 mt-3">
             <Button
               onClick={closeAddOrOpenModal}
               sx={{
@@ -196,7 +278,7 @@ export default function AddOrEditLeaveModal({
                 color: "black",
                 textTransform: "none",
                 width: "100px",
-                padding: "10px",
+                padding: "5px",
                 "&:hover": { bgcolor: "#e0e0e0" },
               }}
             >
@@ -209,7 +291,7 @@ export default function AddOrEditLeaveModal({
                 color: "#fff",
                 textTransform: "none",
                 width: "130px",
-                padding: "10px",
+                padding: "5px",
                 "&:hover": { bgcolor: "#70a4c7" },
               }}
             >

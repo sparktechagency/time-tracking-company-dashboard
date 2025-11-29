@@ -174,7 +174,7 @@ export default function EmployeeLeaveList() {
           }}
         >
           <IoMdAdd />
-          <p>Add Leave Category</p>
+          <p>Manage Leave Category</p>
         </Button>
       </div>
       <div>
